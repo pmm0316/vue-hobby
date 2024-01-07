@@ -48,8 +48,16 @@ const axesHelper = new THREE.AxesHelper(5)
 
 scene.add(axesHelper)
 
+// 设置时钟
+const clock = new THREE.Clock()
+
 // 设置
 function render() {
+
+  const time = clock.getElapsedTime()
+  console.log(time)
+  const deltaTime = clock.getDelta()
+  console.log(deltaTime)
   cube.position.x += 0.01
   cube.rotation.x += 0.01
   if (cube.position.x > 5) {
