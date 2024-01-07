@@ -6,7 +6,7 @@ import gsap from 'gsap'
 // 创建一个场景
 const scene = new THREE.Scene()
 // 创建一个相机
-const { innerWidth, innerHeight } = window
+const { innerWidth, innerHeight, devicePixelRatio } = window
 const camera = new THREE.PerspectiveCamera(75, innerWidth / innerHeight, 0.1, 1000)
 //设置相机位置 x y z轴坐标
 camera.position.set(0, 0, 10)
@@ -43,6 +43,8 @@ document.body.appendChild(renderer.domElement)
 
 // 创建轨道控制器
 const controls = new OrbitControls( camera, renderer.domElement );
+// 设置阻尼感
+controls.enableDamping = true
 
 // 添加坐标轴辅助器
 const axesHelper = new THREE.AxesHelper(5)
@@ -87,13 +89,27 @@ window.addEventListener("dblclick", () => {
 
 // 设置
 function render() {
-
+  // 设置阻尼感后，需要调用update方法
+  controls.update()
   // 使用渲染器，通过相机将场景渲染进来
   renderer.render(scene, camera)
   // 渲染下一帧的时候就会调用render函数
   requestAnimationFrame( render )
 }
 render()
+
+// 监听=画面变化，更新渲染画面
+window.addEventListener('resize', () => {
+  // 更新摄像头
+  camera.aspect = innerWidth / innerHeight
+  // 更新摄像头的投影矩阵
+  camera.updateProjectionMatrix()
+  // 更新渲染器
+  renderer.setSize(innerWidth, innerHeight)
+  // 设置渲染器的像素比
+  renderer.setPixelRatio(devicePixelRatio)
+})
+
 </script>
 
 <template>
