@@ -25,6 +25,10 @@ scene.add(cube)
 // 修改物体的位置
 // cube.position.set(5, 0, 0)
 // cube.position.x = 2
+// 缩放
+// cube.scale.set(3, 2, 1)
+// 旋转
+// cube.rotation.set(Math.PI / 4, 0, 0)
 
 console.log(cube)
 
@@ -46,7 +50,8 @@ scene.add(axesHelper)
 
 // 设置
 function render() {
-  cube.position.x += 0.1
+  cube.position.x += 0.01
+  cube.rotation.x += 0.01
   if (cube.position.x > 5) {
     cube.position.x = 0
   }
