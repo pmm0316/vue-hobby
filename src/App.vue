@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import * as THREE from 'three'
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 console.log(THREE)
 // 创建一个场景
 const scene = new THREE.Scene()
@@ -27,8 +28,19 @@ const renderer = new THREE.WebGLRenderer()
 renderer.setSize(innerWidth, innerHeight)
 // 将webgl旋绕的canvaas内容添加到body中
 document.body.appendChild(renderer.domElement)
-// 使用渲染器，通过相机将场景渲染进来
-renderer.render(scene, camera)
+
+
+// 创建轨道控制器
+const controls = new OrbitControls( camera, renderer.domElement );
+
+// 设置
+function render() {
+  // 使用渲染器，通过相机将场景渲染进来
+  renderer.render(scene, camera)
+  // 渲染下一帧的时候就会调用render函数
+  requestAnimationFrame( render )
+}
+render()
 </script>
 
 <template>
