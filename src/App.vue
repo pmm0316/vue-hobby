@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
-console.log(THREE)
+import gsap from 'gsap'
+
 // 创建一个场景
 const scene = new THREE.Scene()
 // 创建一个相机
@@ -51,18 +52,42 @@ scene.add(axesHelper)
 // 设置时钟
 const clock = new THREE.Clock()
 
+// 设置动画
+const animate = gsap.to(cube.position, {
+  x: 5,
+  duration: 5,
+  // 设置重复的次数
+  repeat: 2,
+  // 往返运动
+  yoyo: true,
+  // 延迟2s运动
+  delay: 2,
+  onComplete: () => {
+    console.log('动画完成')
+  },
+  onStart: () => {
+    console.log('动画开始')
+  }
+})
+gsap.to(cube.rotation, {
+  x: 2 * Math.PI,
+  duration: 5
+})
+
+// 监听双击
+window.addEventListener("dblclick", () => {
+  if (animate.isActive()) {
+    // 暂停
+    animate.pause();
+  } else {
+    // 恢复
+    animate.resume();
+  }
+})
+
 // 设置
 function render() {
 
-  const time = clock.getElapsedTime()
-  console.log(time)
-  const deltaTime = clock.getDelta()
-  console.log(deltaTime)
-  cube.position.x += 0.01
-  cube.rotation.x += 0.01
-  if (cube.position.x > 5) {
-    cube.position.x = 0
-  }
   // 使用渲染器，通过相机将场景渲染进来
   renderer.render(scene, camera)
   // 渲染下一帧的时候就会调用render函数
