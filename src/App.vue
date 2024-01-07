@@ -22,6 +22,12 @@ const cube = new THREE.Mesh(cubeGeometry, cubeMaterial)
 // 将物体添加到场景中
 scene.add(cube)
 
+// 修改物体的位置
+// cube.position.set(5, 0, 0)
+// cube.position.x = 2
+
+console.log(cube)
+
 // 初始化渲染器
 const renderer = new THREE.WebGLRenderer()
 // 设置渲染的尺寸大小
@@ -33,7 +39,6 @@ document.body.appendChild(renderer.domElement)
 // 创建轨道控制器
 const controls = new OrbitControls( camera, renderer.domElement );
 
-
 // 添加坐标轴辅助器
 const axesHelper = new THREE.AxesHelper(5)
 
@@ -41,6 +46,10 @@ scene.add(axesHelper)
 
 // 设置
 function render() {
+  cube.position.x += 0.1
+  if (cube.position.x > 5) {
+    cube.position.x = 0
+  }
   // 使用渲染器，通过相机将场景渲染进来
   renderer.render(scene, camera)
   // 渲染下一帧的时候就会调用render函数
