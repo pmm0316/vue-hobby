@@ -1,85 +1,39 @@
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
+import * as THREE from 'three'
+console.log(THREE)
+// 创建一个场景
+const scene = new THREE.Scene()
+// 创建一个相机
+const { innerWidth, innerHeight } = window
+const camera = new THREE.PerspectiveCamera(75, innerWidth / innerHeight, 0.1, 1000)
+//设置相机位置 x y z轴坐标
+camera.position.set(0, 0, 10)
+// 把相机添加到场景中
+scene.add(camera)
+// 添加物体
+// 创建几何体
+const cubeGeometry = new THREE.BoxGeometry(1, 1, 1);
+const cubeMaterial = new THREE.MeshBasicMaterial({
+  color: 0xffff00
+})
+// 根据几何体和材质创建物体
+const cube = new THREE.Mesh(cubeGeometry, cubeMaterial)
+// 将物体添加到场景中
+scene.add(cube)
+
+// 初始化渲染器
+const renderer = new THREE.WebGLRenderer()
+// 设置渲染的尺寸大小
+renderer.setSize(innerWidth, innerHeight)
+// 将webgl旋绕的canvaas内容添加到body中
+document.body.appendChild(renderer.domElement)
+// 使用渲染器，通过相机将场景渲染进来
+renderer.render(scene, camera)
 </script>
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
-    </div>
-  </header>
-
-  <RouterView />
+  <div></div>
 </template>
 
 <style scoped>
-header {
-  line-height: 1.5;
-  max-height: 100vh;
-}
-
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-nav {
-  width: 100%;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
-}
-
-nav a.router-link-exact-active {
-  color: var(--color-text);
-}
-
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
-}
-
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-nav a:first-of-type {
-  border: 0;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
-  }
-}
 </style>
