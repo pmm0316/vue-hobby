@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import * as THREE from 'three'
+// @ts-ignore
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import gsap from 'gsap'
 // 导入图形用户界面库
