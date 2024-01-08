@@ -32,6 +32,9 @@ texture.repeat.set(2, 3)
 // 设置纹理重复的模式
 texture.wrapS = THREE.MirroredRepeatWrapping
 texture.wrapT = THREE.RepeatWrapping
+// 纹理显示设置
+texture.minFilter = THREE.NearestFilter
+texture.magFilter = THREE.NearestFilter
 
 // 添加物体
 // 创建几何体
