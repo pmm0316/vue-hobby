@@ -17,14 +17,29 @@ camera.position.set(0, 0, 10)
 scene.add(camera)
 
 // 导入纹理
-const texture = new THREE.TextureLoader().load('./images/texture01.png'); 
+const texture = new THREE.TextureLoader().load('./images/texture01.png')
+console.log(texture)
+// 设置纹理偏移
+// texture.offset.x = 0.5
+// texture.offset.y = 0.5
+texture.offset.set(0.5, 0.5)
+// 设置旋转的原点
+texture.center.set(0.5, 0.5)
+// 设置纹理旋转 45度
+texture.rotation = Math.PI / 4
+// 设置纹理重复
+texture.repeat.set(2, 3)
+// 设置纹理重复的模式
+texture.wrapS = THREE.MirroredRepeatWrapping
+texture.wrapT = THREE.RepeatWrapping
+
 // 添加物体
 // 创建几何体
-const geometry = new THREE.BoxGeometry( 1, 1, 1 );
+const geometry = new THREE.BoxGeometry(1, 1, 1)
 // 材质
 const basicMaterial = new THREE.MeshBasicMaterial({
   color: '#ffff00',
-  map: texture,
+  map: texture
 })
 const cube = new THREE.Mesh(geometry, basicMaterial)
 scene.add(cube)
