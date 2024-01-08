@@ -2,9 +2,6 @@
 import * as THREE from 'three'
 // @ts-ignore
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
-import gsap from 'gsap'
-// 导入图形用户界面库
-import * as dat from 'dat.gui'
 
 // 创建一个场景
 const scene = new THREE.Scene()
@@ -15,26 +12,40 @@ const camera = new THREE.PerspectiveCamera(75, innerWidth / innerHeight, 0.1, 10
 camera.position.set(0, 0, 10)
 // 把相机添加到场景中
 scene.add(camera)
+
+// 导入纹理
+const texture = new THREE.TextureLoader().load('./images/texture01.png')
+console.log(texture)
+
 // 添加物体
 // 创建几何体
-for (let i = 0; i < 50; i++) {
-  const geometry = new THREE.BufferGeometry()
-  const positionArray = new Float32Array(9)
-  for (let j = 0; j < 9; j++) {
-    positionArray[j] = Math.random() * 10 - 5
-  }
-  geometry.setAttribute('position', new THREE.BufferAttribute(positionArray, 3))
-  console.log('positionArray', positionArray)
-  const color = new THREE.Color(Math.random(), Math.random(), Math.random())
-  const material = new THREE.MeshBasicMaterial({
-    color,
-    transparent: true,
-    opacity: 0.5
-  })
-  const mesh = new THREE.Mesh(geometry, material)
-  console.log('mesh', mesh)
-  scene.add(mesh)
-}
+const geometry = new THREE.BoxGeometry(1, 1, 1)
+// 材质
+const basicMaterial = new THREE.MeshStandardMaterial({
+  color: '#ffff00',
+  map: texture,
+  side: THREE.DoubleSide,
+  // transparent: true,
+  // opacity: 0.5
+})
+const cube = new THREE.Mesh(geometry, basicMaterial)
+scene.add(cube)
+
+// 添加平面
+const plane = new THREE.Mesh(
+  new THREE.PlaneGeometry(1, 1),
+  basicMaterial
+)
+plane.position.set(3, 0, 0)
+scene.add(plane)
+
+// 加上灯光 环境光
+const light = new THREE.AmbientLight(0xffffff, 0.5)
+scene.add(light)
+// 直线光源
+const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5)
+directionalLight.position.set(0, 10, 10)
+scene.add(directionalLight)
 
 // 初始化渲染器
 const renderer = new THREE.WebGLRenderer()
