@@ -3,6 +3,7 @@ import { onMounted } from 'vue'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js'
+import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js'
 
 onMounted(() => {
   const { innerHeight, innerWidth } = window
@@ -20,65 +21,6 @@ onMounted(() => {
   camera.position.x = 2
   camera.position.y = 2
   camera.lookAt(0, 0, 0)
-
-  // 创建几何体
-  const geometry = new THREE.BufferGeometry()
-  // 创建顶点数据
-  const vertices = new Float32Array([
-    -1.0,
-    -1.0,
-    0, // v0
-    1.0,
-    -1.0,
-    0, // v1
-    1.0,
-    1.0,
-    0, // v2
-
-    -1.0,
-    1.0,
-    0 // v3
-    // -1.0,
-    // 1.0,
-    // 0, // v4
-    // -1.0,
-    // -1.0,
-    // 0 // v5
-  ])
-  geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3))
-
-  // 创建索引
-  const indices = new Uint16Array([0, 1, 2, 2, 3, 0])
-  geometry.setIndex(new THREE.BufferAttribute(indices, 1))
-
-  // 设置2个顶点组，形成2个材质
-  geometry.addGroup(0, 3, 0)
-  geometry.addGroup(3, 3, 1)
-
-  const material = new THREE.MeshBasicMaterial({ color: 0xff0000, wireframe: true })
-  const material2 = new THREE.MeshBasicMaterial({ color: 0xff0000 })
-  const mesh = new THREE.Mesh(geometry, [material, material2])
-  console.log('geometry', geometry)
-  scene.add(mesh)
-
-  // 创建一个立方体
-  const cubeGeometry = new THREE.BoxGeometry(1, 1, 1)
-  const cubeMaterial1 = new THREE.MeshBasicMaterial({ color: 0xff0000 })
-  const cubeMaterial2 = new THREE.MeshBasicMaterial({ color: 0x0ff000 })
-  const cubeMaterial3 = new THREE.MeshBasicMaterial({ color: 0x00ff00 })
-  const cubeMaterial4 = new THREE.MeshBasicMaterial({ color: 0x000ff0 })
-  const cubeMaterial5 = new THREE.MeshBasicMaterial({ color: 0x0000ff })
-  const cubeMaterial6 = new THREE.MeshBasicMaterial({ color: 0xff0f60 })
-  const cube = new THREE.Mesh(cubeGeometry, [
-    cubeMaterial1,
-    cubeMaterial2,
-    cubeMaterial3,
-    cubeMaterial4,
-    cubeMaterial5,
-    cubeMaterial6
-  ])
-  cube.position.x = 2
-  scene.add(cube)
 
   // 创建轨道控制器
   const controls = new OrbitControls(camera, renderer.domElement)
@@ -109,21 +51,51 @@ onMounted(() => {
     camera.updateProjectionMatrix()
   })
 
-  const eventObj = {
-    Fullscreen: () => {
-      // 全屏
-      document.body.requestFullscreen()
-    },
-    ExitFullscreen: () => {
-      // 退出全屏
-      document.exitFullscreen()
-    }
-  }
   const gui = new GUI()
-  // 添加按钮
-  gui.add(eventObj, 'Fullscreen').name('全屏')
-  gui.add(eventObj, 'ExitFullscreen').name('退出全屏')
-  // const folder = gui.addFolder('立方体位置')
+  // 创建纹理加载器
+  const textureLoader = new THREE.TextureLoader()
+
+  // 加载纹理
+  const texture = textureLoader.load('./texture/watercover/CityNewYork002_COL_VAR1_1K.png')
+
+  // 加载ao贴图
+  const aoMap = textureLoader.load('./texture/watercover/CityNewYork002_AO_1K.png')
+
+  // 加载透明度贴图
+  // public\texture\door\height.jpg
+  const alphaMap = textureLoader.load('./texture/door/height.jpg')
+
+  // 光照贴图
+  const lightMap = textureLoader.load('./texture/colors.png')
+
+  // 高光贴图 public\texture\watercover\CityNewYork002_GLOSS_1K.jpg
+  const specularMap = textureLoader.load('./texture/watercover/CityNewYork002_GLOSS_1K.jpg')
+
+  // 加载hdr贴图
+  const rgbeLoader = new RGBELoader()
+  rgbeLoader.load("./texture/Alex_Hart-Nature_Lab_Bones_2k.hdr", (envMap) => {
+    // 设置球形贴图
+    envMap.mapping = THREE.EquirectangularReflectionMapping
+    // 设置环境贴图
+    scene.background = envMap
+    // 设置plane的环境贴图
+    planeMaterial.envMap = envMap
+  })
+
+  const planeGeometry = new THREE.PlaneGeometry(1, 1)
+  const planeMaterial = new THREE.MeshBasicMaterial({
+    color: 0xffffff,
+    map: texture,
+    transparent: true,
+    aoMap,
+    aoMapIntensity: 0,
+    // alphaMap,
+    lightMap,
+    specularMap,
+  })
+  const plane = new THREE.Mesh(planeGeometry, planeMaterial)
+  scene.add(plane)
+  gui.add(planeMaterial, 'aoMapIntensity').min(0).max(1).name('ao强度')
 })
 </script>
 
