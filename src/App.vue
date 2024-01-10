@@ -4,6 +4,8 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js'
 import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js'
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
+import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 
 onMounted(() => {
   const { innerHeight, innerWidth } = window
@@ -52,50 +54,34 @@ onMounted(() => {
   })
 
   const gui = new GUI()
-  // 创建纹理加载器
-  const textureLoader = new THREE.TextureLoader()
+  // 创建场景fog
+  // scene.fog = new THREE.Fog(0x999999, 0.1, 50)
+  // 创建场景指数fog
+  scene.fog = new THREE.FogExp2(0x999999, 0.1)
+  scene.background = new THREE.Color(0x999999)
 
-  // 加载纹理
-  const texture = textureLoader.load('./texture/watercover/CityNewYork002_COL_VAR1_1K.png')
+  // 实例化加载器gltf
+  const gltfLoader = new GLTFLoader()
+  gltfLoader.load('./model/Duck.glb', (gltf) => {
+    scene.add(gltf.scene)
+  })
 
-  // 加载ao贴图
-  const aoMap = textureLoader.load('./texture/watercover/CityNewYork002_AO_1K.png')
-
-  // 加载透明度贴图
-  // public\texture\door\height.jpg
-  const alphaMap = textureLoader.load('./texture/door/height.jpg')
-
-  // 光照贴图
-  const lightMap = textureLoader.load('./texture/colors.png')
-
-  // 高光贴图 public\texture\watercover\CityNewYork002_GLOSS_1K.jpg
-  const specularMap = textureLoader.load('./texture/watercover/CityNewYork002_GLOSS_1K.jpg')
-
-  // 加载hdr贴图
+  // 加载环境贴图
   const rgbeLoader = new RGBELoader()
   rgbeLoader.load("./texture/Alex_Hart-Nature_Lab_Bones_2k.hdr", (envMap) => {
-    // 设置球形贴图
     envMap.mapping = THREE.EquirectangularReflectionMapping
     // 设置环境贴图
-    scene.background = envMap
-    // 设置plane的环境贴图
-    planeMaterial.envMap = envMap
+    scene.environment = envMap
   })
 
-  const planeGeometry = new THREE.PlaneGeometry(1, 1)
-  const planeMaterial = new THREE.MeshBasicMaterial({
-    color: 0xffffff,
-    map: texture,
-    transparent: true,
-    aoMap,
-    aoMapIntensity: 0,
-    // alphaMap,
-    lightMap,
-    specularMap,
+  // 解码器  压缩的glb模型需要用解码器
+  const dracoLoader = new DRACOLoader();
+  dracoLoader.setDecoderPath( './draco/' );
+  gltfLoader.setDRACOLoader(dracoLoader)
+
+  gltfLoader.load("./model/city.glb", (gltf) => {
+    scene.add(gltf.scene)
   })
-  const plane = new THREE.Mesh(planeGeometry, planeMaterial)
-  scene.add(plane)
-  gui.add(planeMaterial, 'aoMapIntensity').min(0).max(1).name('ao强度')
 })
 </script>
 
