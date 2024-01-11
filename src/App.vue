@@ -11,6 +11,10 @@ import * as TWEEN from 'three/examples/jsm/libs/tween.module.js'
 const { innerHeight, innerWidth } = window
 
 let canvasDom = ref<any>(null)
+let selectedBodyColor = ref<string>('')
+let selectedFontColor = ref<string>('')
+let selectedHoodColor = ref<string>('')
+let selectedWheelsColor = ref<string>('')
 
 // 创建场景
 const scene = new THREE.Scene()
@@ -103,12 +107,27 @@ const materials: any[] = [
   { name: '冰晶', value: 0 }
 ]
 
-const selectColor = (color: string) => {
-  bodyMaterial.color.set(color)
-  fontMaterial.color.set(color)
-  hoodMaterial.color.set(color)
-  wheelsMaterial.color.set(color)
-  glassMaterial.color.set(color)
+const selectColor = (color: string, type: string) => {
+  const eventObj = {
+    bodyMaterial: () => {
+      selectedBodyColor.value = color
+      bodyMaterial.color.set(color)
+    },
+    fontMaterial: () => {
+      selectedFontColor.value = color
+      fontMaterial.color.set(color)
+    },
+    hoodMaterial: () => {
+      selectedHoodColor.value = color
+      hoodMaterial.color.set(color)
+    },
+    wheelsMaterial: () => {
+      selectedWheelsColor.value = color
+      wheelsMaterial.color.set(color)
+    }
+  }
+  // @ts-ignore
+  eventObj[type]()
 }
 
 const selectMaterial = (item: any) => {
@@ -127,7 +146,7 @@ const lightPositionGroup: Array<number>[] = [
   [5, 10, 0],
   [0, 10, 5],
   [0, 10, -5],
-  [-5, 10, 0],
+  [-5, 10, 0]
 ]
 
 onMounted(() => {
@@ -202,28 +221,63 @@ onMounted(() => {
   <div class="home">
     <div class="canvas-container" ref="canvasDom"></div>
     <div class="home-content">
-      <div class="home-content-title">
-        <h1>汽车展示与选配</h1>
-      </div>
       <h2>选择车身颜色</h2>
       <div class="select">
-        <div class="select-item" :key="value" v-for="value in colors" @click="selectColor(value)">
-          <div class="select-item-color" :style="{ background: value }"></div>
-        </div>
+        <div
+          class="color-item"
+          :class="{ 'active-item': selectedBodyColor === value }"
+          :key="value"
+          v-for="value in colors"
+          :style="{ background: value }"
+          @click="selectColor(value, 'bodyMaterial')"
+        ></div>
       </div>
-      <h2>选择贴膜材质</h2>
+      <h2>引擎盖选择</h2>
       <div class="select">
         <div
-          class="select-item"
+          class="color-item"
+          :class="{ 'active-item': selectedHoodColor === value }"
+          :key="value"
+          v-for="value in colors"
+          @click="selectColor(value, 'hoodMaterial')"
+          :style="{ background: value }"
+        ></div>
+      </div>
+      <h2>前脸选择</h2>
+      <div class="select">
+        <div
+          class="color-item"
+          :class="{ 'active-item': selectedFontColor === value }"
+          :key="value"
+          v-for="value in colors"
+          @click="selectColor(value, 'fontMaterial')"
+          :style="{ background: value }"
+        ></div>
+      </div>
+      <h2>轮毂选择</h2>
+      <div class="select">
+        <div
+          class="color-item"
+          :class="{ 'active-item': selectedWheelsColor === value }"
+          :key="value"
+          v-for="value in colors"
+          @click="selectColor(value, 'wheelsMaterial')"
+          :style="{ background: value }"
+        ></div>
+      </div>
+      <!-- <h2>选择贴膜材质</h2>
+      <div class="select">
+        <div
+          class="color-item"
           :key="item.name"
           v-for="item in materials"
           @click="selectMaterial(item)"
         >
-          <div class="select-item-text">
+          <div class="color-item-text">
             {{ item.name }}
           </div>
         </div>
-      </div>
+      </div> -->
     </div>
   </div>
 </template>
@@ -237,12 +291,18 @@ onMounted(() => {
 .select {
   display: flex;
 }
-.select-item-color {
-  width: 50px;
-  height: 50px;
+.color-item {
+  box-sizing: border-box;
+  width: 40px;
+  height: 40px;
   border-radius: 10px;
   display: flex;
   cursor: pointer;
   margin-right: 15px;
+}
+.active-item {
+  width: 43px;
+  height: 43px;
+  border: 2px solid #333;
 }
 </style>
