@@ -1,92 +1,248 @@
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { onMounted, reactive, ref } from 'vue'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js'
 import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
-import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
+import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js'
+import * as TWEEN from 'three/examples/jsm/libs/tween.module.js'
+
+const { innerHeight, innerWidth } = window
+
+let canvasDom = ref<any>(null)
+
+// 创建场景
+const scene = new THREE.Scene()
+
+// 创建相机
+const camera = new THREE.PerspectiveCamera(75, innerWidth / innerHeight, 0.1, 1000)
+camera.position.set(0, 2, 6)
+
+// 创建渲染器
+const renderer = new THREE.WebGLRenderer({
+  // 抗锯齿
+  antialias: true
+})
+renderer.setSize(window.innerWidth, window.innerHeight)
+
+// 创建轨道控制器
+let controls = new OrbitControls(camera, renderer.domElement)
+
+function render() {
+  renderer.render(scene, camera)
+  requestAnimationFrame(render)
+  // cube.rotation.x += 0.01
+  // cube.rotation.y += 0.01
+  // controls.update()
+  // 渲染
+  controls && controls.update()
+  // 更新
+  // tween.update()
+}
+
+let wheels = []
+let carBody, frontCar, hoodCar, glassCar
+
+// 创建材质
+const bodyMaterial = new THREE.MeshPhysicalMaterial({
+  color: '#FF0000',
+  // 金属感
+  metalness: 1,
+  // 粗糙度
+  roughness: 0.5,
+  // 清漆
+  clearcoat: 1,
+  clearcoatRoughness: 0
+})
+
+const fontMaterial = new THREE.MeshPhysicalMaterial({
+  color: '#FF0000',
+  // 金属感
+  metalness: 1,
+  // 粗糙度
+  roughness: 0.5,
+  // 清漆
+  clearcoat: 1,
+  clearcoatRoughness: 0
+})
+
+const hoodMaterial = new THREE.MeshPhysicalMaterial({
+  color: '#FF0000',
+  // 金属感
+  metalness: 1,
+  // 粗糙度
+  roughness: 0.5,
+  // 清漆
+  clearcoat: 1,
+  clearcoatRoughness: 0
+})
+
+const wheelsMaterial = new THREE.MeshPhysicalMaterial({
+  color: '#FF0000',
+  // 金属感
+  metalness: 1,
+  // 粗糙度
+  roughness: 0.1
+})
+
+const glassMaterial = new THREE.MeshPhysicalMaterial({
+  color: '#FFFFFF',
+  metalness: 0,
+  // 粗糙度
+  roughness: 0.01,
+  // opacity: 1,
+  transmission: 1,
+  transparent: true
+})
+
+const colors: any[] = ['red', 'blue', 'green', 'yellow', 'orange']
+
+const materials: any[] = [
+  { name: '磨砂', value: 1 },
+  { name: '冰晶', value: 0 }
+]
+
+const selectColor = (color: string) => {
+  bodyMaterial.color.set(color)
+  fontMaterial.color.set(color)
+  hoodMaterial.color.set(color)
+  wheelsMaterial.color.set(color)
+  glassMaterial.color.set(color)
+}
+
+const selectMaterial = (item: any) => {
+  bodyMaterial.clearcoatRoughness = item.value
+  fontMaterial.clearcoatRoughness = item.value
+  hoodMaterial.clearcoatRoughness = item.value
+}
+
+// 灯光定位数组
+const lightPositionGroup: Array<number>[] = [
+  [0, 0, 10],
+  [0, 0, -10],
+  [-10, 0, 0],
+  [10, 0, 0],
+  [0, 10, 0],
+  [5, 10, 0],
+  [0, 10, 5],
+  [0, 10, -5],
+  [-5, 10, 0],
+]
 
 onMounted(() => {
-  const { innerHeight, innerWidth } = window
-  // 创建场景
-  const scene = new THREE.Scene()
-  // 创建相机
-  const camera = new THREE.PerspectiveCamera(75, innerWidth / innerHeight, 0.1, 1000)
+  if (!canvasDom.value) return
+  // 将渲染器插入到dom中
+  canvasDom?.value.appendChild(renderer.domElement)
 
-  // 创建渲染器
-  const renderer = new THREE.WebGLRenderer()
-  renderer.setSize(window.innerWidth, window.innerHeight)
-  document.body.appendChild(renderer.domElement)
+  // 初始化渲染器，渲染背景
+  renderer.setClearColor('#000')
+  scene.background = new THREE.Color('#CCC')
+  // scene.environment = new THREE.Color('#ccc')
+  render()
 
-  camera.position.z = 5
-  camera.position.x = 2
-  camera.position.y = 2
-  camera.lookAt(0, 0, 0)
+  // 添加网格地面
+  const gridHelper = new THREE.GridHelper(10, 10)
+  gridHelper.material.opacity = 0.2
+  gridHelper.material.transparent = true
+  scene.add(gridHelper)
 
-  // 创建轨道控制器
-  const controls = new OrbitControls(camera, renderer.domElement)
-  // 设置阻尼惯性
-  controls.enableDamping = true
-
-  // 创建坐标轴
-  const axesHelper = new THREE.AxesHelper(5)
-  scene.add(axesHelper)
-
-  function animate() {
-    requestAnimationFrame(animate)
-    // cube.rotation.x += 0.01
-    // cube.rotation.y += 0.01
-    controls.update()
-    // 渲染
-    renderer.render(scene, camera)
-  }
-  animate()
-  window.addEventListener('resize', () => {
-    console.log('innerWidth', innerWidth)
-    console.log('innerHeight', innerHeight)
-    // 重置渲染器宽高比
-    renderer.setSize(window.innerWidth, window.innerHeight)
-    // 重置相机宽高比
-    camera.aspect = window.innerWidth / window.innerHeight
-    // 更新相机投影矩阵
-    camera.updateProjectionMatrix()
+  // 添加汽车模型
+  const loader = new GLTFLoader()
+  const dracoLoader = new DRACOLoader()
+  dracoLoader.setDecoderPath('./draco/')
+  loader.setDRACOLoader(dracoLoader)
+  loader.load('./model/bmw01.glb', (gltf) => {
+    const bmw = gltf.scene
+    console.log('gltf', gltf)
+    bmw.traverse((child: any) => {
+      if (child.isMesh) {
+        console.log(child.name)
+      }
+      if (child.isMesh) {
+        // 判断是否是轮毂
+        if (child.name.includes('轮毂')) {
+          child.material = wheelsMaterial
+          wheels.push(child)
+        }
+        // 判断是否是车身
+        if (child.name.includes('Mesh002')) {
+          child.material = bodyMaterial
+          carBody = child
+        }
+        // 判断是否是前脸
+        if (child.name.includes('前脸')) {
+          child.material = fontMaterial
+          frontCar = child
+        }
+        // 判断是否是引擎盖
+        if (child.name.includes('引擎盖_1')) {
+          child.material = hoodMaterial
+          hoodCar = child
+        }
+        // 判断是否是挡风玻璃
+        if (child.name.includes('挡风玻璃')) {
+          child.material = glassMaterial
+          hoodCar = child
+        }
+      }
+    })
+    scene.add(bmw)
   })
-
-  const gui = new GUI()
-  // 创建场景fog
-  // scene.fog = new THREE.Fog(0x999999, 0.1, 50)
-  // 创建场景指数fog
-  scene.fog = new THREE.FogExp2(0x999999, 0.1)
-  scene.background = new THREE.Color(0x999999)
-
-  // 实例化加载器gltf
-  const gltfLoader = new GLTFLoader()
-  gltfLoader.load('./model/Duck.glb', (gltf) => {
-    scene.add(gltf.scene)
-  })
-
-  // 加载环境贴图
-  const rgbeLoader = new RGBELoader()
-  rgbeLoader.load("./texture/Alex_Hart-Nature_Lab_Bones_2k.hdr", (envMap) => {
-    envMap.mapping = THREE.EquirectangularReflectionMapping
-    // 设置环境贴图
-    scene.environment = envMap
-  })
-
-  // 解码器  压缩的glb模型需要用解码器
-  const dracoLoader = new DRACOLoader();
-  dracoLoader.setDecoderPath( './draco/' );
-  gltfLoader.setDRACOLoader(dracoLoader)
-
-  gltfLoader.load("./model/city.glb", (gltf) => {
-    scene.add(gltf.scene)
+  // 添加灯光
+  lightPositionGroup.forEach((item: number[]) => {
+    const light = new THREE.DirectionalLight(0xffffff, 1)
+    light.position.set(item[0], item[1], item[2])
+    scene.add(light)
   })
 })
 </script>
 
 <template>
-  <div></div>
+  <div class="home">
+    <div class="canvas-container" ref="canvasDom"></div>
+    <div class="home-content">
+      <div class="home-content-title">
+        <h1>汽车展示与选配</h1>
+      </div>
+      <h2>选择车身颜色</h2>
+      <div class="select">
+        <div class="select-item" :key="value" v-for="value in colors" @click="selectColor(value)">
+          <div class="select-item-color" :style="{ background: value }"></div>
+        </div>
+      </div>
+      <h2>选择贴膜材质</h2>
+      <div class="select">
+        <div
+          class="select-item"
+          :key="item.name"
+          v-for="item in materials"
+          @click="selectMaterial(item)"
+        >
+          <div class="select-item-text">
+            {{ item.name }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.home-content {
+  position: fixed;
+  top: 0;
+  right: 20px;
+}
+.select {
+  display: flex;
+}
+.select-item-color {
+  width: 50px;
+  height: 50px;
+  border-radius: 10px;
+  display: flex;
+  cursor: pointer;
+  margin-right: 15px;
+}
+</style>
