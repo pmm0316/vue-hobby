@@ -1,3 +1,6 @@
+<template>
+  <div class="container" ref="container"></div>
+</template>
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import * as THREE from 'three'
@@ -9,80 +12,51 @@ import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js'
 import * as TWEEN from 'three/examples/jsm/libs/tween.module.js'
 import { Water } from 'three/examples/jsm/objects/Water2.js'
 
-const canvasContainer: any = ref(null)
-onMounted(() => {
-  const scene = new THREE.Scene()
+// 创建场景
+const scene = new THREE.Scene()
 
-  const camera = new THREE.PerspectiveCamera(
-    0.75,
-    window.innerWidth / window.innerHeight,
-    0.1,
-    1000
-  )
+// 创建相机
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
+// 设置相机的位置
+camera.position.set(0, 0, 0.1)
+// camera.updateProjectionMatrix()
+const renderer = new THREE.WebGLRenderer()
+renderer.setSize(window.innerWidth, window.innerHeight)
+const container = ref<any>(null)
 
-  camera.position.set(1.5, 1, 1.5)
-  camera.aspect = window.innerWidth / window.innerHeight
-  // 更新相机的投影矩阵
-  camera.updateProjectionMatrix()
+function render() {
+  renderer.render(scene, camera)
+  requestAnimationFrame(render)
+}
+// 添加立方体
+const boxGeometry = new THREE.BoxGeometry(10, 10, 10)
 
-  const loader = new THREE.TextureLoader()
-  const texture = loader.load('./images/050.jpg')
-  // texture.mapping = THREE.EquirectangularRefractionMapping
-  scene.background = texture
-  scene.environment = texture
+const arr = ['4_l', '4_r', '4_u', '4_d', '4_b', '4_f']
+const boxMaterials: THREE.MeshBasicMaterial[] | undefined = []
 
-  // 添加环境光
-  const ambient = new THREE.AmbientLight(0xffffff, 1)
-  scene.add(ambient)
-
-  // 加载小熊模型
-  const gltfLoader = new GLTFLoader()
-  gltfLoader.load('./model/bear.gltf', (gltf) => {
-    const model: any = gltf.scene
-    model.material = new THREE.MeshPhongMaterial({
-      color: '0xffffff',
-      envMap: texture,
-      refractionRatio: 0.7,
-      reflectivity: 0.99
-    })
-    model.scale.set(0.02, 0.02, 0.02)
-    scene.add(model)
-  })
-
-  // 初始化渲染器
-  const renderer = new THREE.WebGLRenderer({
-    antialias: true
-  })
-  renderer.setSize(window.innerWidth, window.innerHeight)
-  window.addEventListener('resize', () => {
-    renderer.setSize(window.innerWidth, window.innerHeight)
-    camera.aspect = window.innerWidth / window.innerHeight
-    camera.updateProjectionMatrix()
-  })
-  // 将渲染器添加到页面
-  console.log('ss', canvasContainer.value)
-  canvasContainer.value?.appendChild(renderer.domElement)
-
-  // 添加控制器
-  const controls = new OrbitControls(camera, renderer.domElement)
-  // 设置控制器阻尼
-  controls.enableDamping = true
-
-  // 渲染函数
-  function render() {
-    // 更新控制器
-    controls.update()
-    // 渲染场景
-    renderer.render(scene, camera)
-    // 循环渲染
-    requestAnimationFrame(render)
+arr.forEach((item) => {
+  const texture = new THREE.TextureLoader().load(`./kanfang/living/${item}.jpg`)
+  if (['4_u', '4_d'].includes(item)) {
+    texture.center = new THREE.Vector2(0.5, 0.5)
+    texture.rotation = Math.PI
   }
+  boxMaterials.push(
+    new THREE.MeshBasicMaterial({
+      map: texture
+    })
+  )
+})
+const boxMesh = new THREE.Mesh(boxGeometry, boxMaterials)
+boxMesh.geometry.scale(1, 1, -1)
+scene.add(boxMesh)
+
+onMounted(() => {
+  if (!container.value) return
+  const controls = new OrbitControls(camera, renderer.domElement)
+  controls.enableDamping = true
+  container.value.appendChild(renderer.domElement)
   render()
 })
 </script>
-
-<template>
-  <div class="canvasContainer" ref="canvasContainer"></div>
-</template>
 
 <style scoped></style>
