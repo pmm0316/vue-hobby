@@ -13,11 +13,13 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "cesium": "^1.113.0",
     "dat.gui": "^0.7.9",
     "element-plus": "^2.5.1",
     "gsap": "^3.12.4",
     "mitt": "^3.0.1",
     "three": "^0.160.0",
+    "vite-plugin-cesium": "^1.2.22",
     "vue": "^3.3.11",
     "vue-router": "^4.2.5"
   },
