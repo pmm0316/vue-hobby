@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import SmartPark from '../views/SmartPark.vue'
+import CarShowroom from '../views/CarShowroom.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -9,6 +10,11 @@ const router = createRouter({
       path: '/smartPark',
       name: 'smartPark',
       component: SmartPark
+    },
+    {
+      path: '/carShowroom',
+      name: 'carShowroom',
+      component: CarShowroom
     },
     // {
     //   path: '/about',
