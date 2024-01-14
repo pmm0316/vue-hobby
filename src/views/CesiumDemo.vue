@@ -17,7 +17,7 @@ onMounted(() => {
   // @ts-ignore 隐藏cesium的icon
   viewer.cesiumWidget.creditContainer.style.display = 'none'
   const dataGeo = Cesium.GeoJsonDataSource.load(
-    'https://geo.datav.aliyun.com/areas_v3/bound/100000_full.json',
+    'https://geo.datav.aliyun.com/areas_v3/bound/geojson?code=100000_full',
     {
       stroke: Cesium.Color.RED,
       strokeWidth: 4,
@@ -25,7 +25,17 @@ onMounted(() => {
     }
   )
   dataGeo.then((dataSource) => {
+    console.log('dataSource', dataSource)
     viewer.dataSources.add(dataSource)
+    const entities = dataSource.entities.values
+    entities.forEach((entity: any) => {
+      entity.polygon.material = Cesium.Color.fromRandom({
+        alpha: 1
+      })
+      entity.polygon.outline = false
+      // 凸起来的高度 
+      entity.polygon.extrudedHeight = 1000000 * Math.random()
+    })
   })
 })
 </script>
