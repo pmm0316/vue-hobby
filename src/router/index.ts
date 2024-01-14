@@ -1,13 +1,15 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import SmartPark from '../views/SmartPark.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
+  strict: true,
   routes: [
-    // {
-    //   path: '/',
-    //   name: 'home',
-    //   component: HomeView
-    // },
+    {
+      path: '/smartPark',
+      name: 'smartPark',
+      component: SmartPark
+    },
     // {
     //   path: '/about',
     //   name: 'about',
