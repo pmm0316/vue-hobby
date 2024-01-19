@@ -3,18 +3,24 @@ import SmartPark from '../views/SmartPark.vue'
 import CarShowroom from '../views/CarShowroom.vue'
 import Keyframes from '../views/Keyframes.vue'
 import CesiumDemo from '../views/CesiumDemo.vue'
+import HomePage from '../views/HomePage.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   strict: true,
   routes: [
     {
-      path: '/smartPark',
-      name: 'smartPark',
-      component: SmartPark
+      path: '/',
+      name: 'Home',
+      component: HomePage
     },
     {
-      path: '/carShowroom',
+      path: '/home',
+      name: 'Home',
+      component: HomePage
+    },
+    {
+      path: '/threejs/carShowroom',
       name: 'carShowroom',
       component: CarShowroom
     },
@@ -28,14 +34,6 @@ const router = createRouter({
       name: 'cesiumDemo',
       component: CesiumDemo
     },
-    // {
-    //   path: '/about',
-    //   name: 'about',
-    //   // route level code-splitting
-    //   // this generates a separate chunk (About.[hash].js) for this route
-    //   // which is lazy-loaded when the route is visited.
-    //   component: () => import('../views/AboutView.vue')
-    // }
   ]
 })
 

@@ -171,6 +171,7 @@
     const dracoLoader = new DRACOLoader()
     dracoLoader.setDecoderPath('./draco/')
     loader.setDRACOLoader(dracoLoader)
+    // D:\project\threejs-demo\public\model\bmw01.glb
     loader.load('./model/bmw01.glb', (gltf) => {
       const bmw = gltf.scene
       console.log('gltf', gltf)
