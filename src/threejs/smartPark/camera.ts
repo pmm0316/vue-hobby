@@ -1,5 +1,4 @@
 import * as THREE from 'three'
-import eventHub from '@/utils/eventHub'
 
 // 创建相机
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100000)
@@ -14,9 +13,6 @@ class CameraModule {
     this.collection = {
       default: camera
     }
-    eventHub.on('toggleCamera', (name) => {
-      this.setActive(name)
-    })
   }
   add(name: string, camera: any) {
     this.collection[name] = camera

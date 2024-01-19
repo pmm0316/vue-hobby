@@ -1,5 +1,5 @@
 <template>
-  <div class="common-layout">
+  <div class="home-page">
     <el-card class="box-card">
       <template #header>
         <div class="card-header">
@@ -59,7 +59,7 @@ const tableData = [
     post: '前端开发工程师'
   },
   {
-    companyName: '吉利研究院',
+    companyName: '吉利汽车研究院',
     workingTime: '2018.02-2019.03',
     post: '业务（前端）开发工程师'
   },
@@ -72,6 +72,9 @@ const tableData = [
 </script>
 
 <style scoped>
+.home-page {
+  padding: 20px;
+}
 .box-card {
   margin-bottom: 20px;
 }

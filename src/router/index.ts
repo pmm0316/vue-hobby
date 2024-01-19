@@ -4,6 +4,9 @@ import CarShowroom from '../views/CarShowroom.vue'
 import Keyframes from '../views/Keyframes.vue'
 import CesiumDemo from '../views/CesiumDemo.vue'
 import HomePage from '../views/HomePage.vue'
+import HelloCesium from '@/views/HelloCesium.vue'
+import TechnologyStack from '@/views/TechnologyStack.vue'
+import BoxGeometry from '@/views/threejs/BoxGeometry.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -20,20 +23,35 @@ const router = createRouter({
       component: HomePage
     },
     {
-      path: '/threejs/carShowroom',
-      name: 'carShowroom',
-      component: CarShowroom
+      path: '/threejs/boxGeometry',
+      name: 'BoxGeometry',
+      component: BoxGeometry
     },
+    // {
+    //   path: '/threejs/carShowroom',
+    //   name: 'carShowroom',
+    //   component: CarShowroom
+    // },
     {
-      path: '/keyframes',
-      name: 'keyframes',
-      component: Keyframes
+      path: '/cesium/helloCesium',
+      name: 'helloCesium',
+      component: HelloCesium
     },
-    {
-      path: '/cesiumDemo',
-      name: 'cesiumDemo',
-      component: CesiumDemo
-    },
+    // {
+    //   path: '/threejs/keyframes',
+    //   name: 'keyframes',
+    //   component: Keyframes
+    // },
+    // {
+    //   path: '/threejs/technologyStack',
+    //   name: 'TechnologyStack',
+    //   component: TechnologyStack
+    // },
+    // {
+    //   path: '/cesiumDemo',
+    //   name: 'cesiumDemo',
+    //   component: CesiumDemo
+    // },
   ]
 })
 

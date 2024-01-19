@@ -2,7 +2,7 @@
   <div class="common-layout">
     <el-container>
       <AsideMenu />
-      <el-main>
+      <el-main class="my-el-main" >
         <router-view />
       </el-main>
     </el-container>
@@ -14,11 +14,7 @@ import AsideMenu from './components/AsideMenu.vue'
 </script>
 
 <style scoped>
-.top-wrapper {
-  display: flex;
-  justify-content: flex-end;
-}
-.demo-tabs {
-  width: 100%;
+.my-el-main {
+  padding: 0;
 }
 </style>

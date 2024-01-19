@@ -8,12 +8,22 @@ const menuList = [
     url: '/home'
   },
   {
-    name: 'threejs',
+    name: 'Threejs',
     url: '/threejs',
     children: [
       {
-        name: '汽车展厅',
-        url: '/threejs/carShowroom'
+        name: 'BoxGeometry',
+        url: '/threejs/boxGeometry'
+      },
+    ]
+  },
+  {
+    name: 'Cesium',
+    url: '/cesium',
+    children: [
+      {
+        name: 'HelloCesium',
+        url: '/cesium/helloCesium'
       }
     ]
   }
