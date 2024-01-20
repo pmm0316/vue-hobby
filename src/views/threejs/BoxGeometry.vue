@@ -94,6 +94,8 @@ const renderer = new THREE.WebGLRenderer({
   antialias: true
 })
 renderer.setPixelRatio(window.devicePixelRatio)
+console.log('width', width)
+console.log('height', height)
 renderer.setSize(width, height) // canvas画布宽高比
 renderer.render(scene, camera)
 // 设置背景色

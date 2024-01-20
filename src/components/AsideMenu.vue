@@ -15,6 +15,10 @@ const menuList = [
         name: 'BasicChart',
         url: '/echarts/basicChart'
       },
+      {
+        name: '浙江地图',
+        url: '/echarts/zjMap'
+      },
     ]
   },
   {

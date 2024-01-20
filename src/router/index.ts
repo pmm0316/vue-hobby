@@ -4,6 +4,7 @@ import HelloCesium from '@/views/HelloCesium.vue'
 import BoxGeometry from '@/views/threejs/BoxGeometry.vue'
 import BufferGeomery from '@/views/threejs/BufferGeomery.vue'
 import BasicChart from '@/views/echarts/BasicChart.vue'
+import ZhejiangMap from '@/views/echarts/ZhejiangMap.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -37,6 +38,11 @@ const router = createRouter({
       path: '/echarts/basicChart',
       name: 'basicChart',
       component: BasicChart
+    },
+    {
+      path: '/echarts/zjMap',
+      name: 'zhejiangMap',
+      component: ZhejiangMap
     },
   ]
 })

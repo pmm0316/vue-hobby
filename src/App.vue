@@ -16,7 +16,7 @@ import AsideMenu from './components/AsideMenu.vue'
 <style scoped>
 .my-el-main {
   padding: 0;
-  overflow-y: scroll;
+  overflow-y: auto;
   height: 100vh;
 }
 </style>
