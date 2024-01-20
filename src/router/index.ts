@@ -7,6 +7,7 @@ import HomePage from '../views/HomePage.vue'
 import HelloCesium from '@/views/HelloCesium.vue'
 import TechnologyStack from '@/views/TechnologyStack.vue'
 import BoxGeometry from '@/views/threejs/BoxGeometry.vue'
+import BufferGeomery from '@/views/threejs/BufferGeomery.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -27,11 +28,11 @@ const router = createRouter({
       name: 'BoxGeometry',
       component: BoxGeometry
     },
-    // {
-    //   path: '/threejs/carShowroom',
-    //   name: 'carShowroom',
-    //   component: CarShowroom
-    // },
+    {
+      path: '/threejs/bufferGeometry',
+      name: 'BufferGeometry',
+      component: BufferGeomery
+    },
     {
       path: '/cesium/helloCesium',
       name: 'helloCesium',

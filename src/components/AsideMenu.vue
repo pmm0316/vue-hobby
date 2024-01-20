@@ -15,6 +15,10 @@ const menuList = [
         name: 'BoxGeometry',
         url: '/threejs/boxGeometry'
       },
+      {
+        name: 'BufferGeometry',
+        url: '/threejs/bufferGeometry'
+      },
     ]
   },
   {
@@ -54,12 +58,13 @@ const handleClickMenu = (url: string) => {
        
 
       </el-sub-menu> -->
-      <div v-for="(item, index) in menuList" :key="item.url">
+      <div v-for="(item) in menuList" :key="item.url">
         <template v-if="item.children">
-          <el-sub-menu :key="item.url" :index="index">
+          <el-sub-menu :key="item.url" :index="item.url">
             <template #title>{{ item.name }}</template>
             <el-menu-item
               v-for="cItem in item.children"
+              :index="cItem.url"
               :key="cItem.url"
               @click="handleClickMenu(cItem.url)"
             >
@@ -68,7 +73,7 @@ const handleClickMenu = (url: string) => {
           </el-sub-menu>
         </template>
         <template v-else>
-          <el-menu-item :key="item.url" @click="handleClickMenu(item.url)">
+          <el-menu-item :index="item.url" :key="item.url" @click="handleClickMenu(item.url)">
             {{ item.name }}
           </el-menu-item>
         </template>

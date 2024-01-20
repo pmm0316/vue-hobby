@@ -7,7 +7,7 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 // 引入性能监视器
 import Stats from 'three/addons/libs/stats.module.js'
 import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js'
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 
 const container = ref<any>(null)
 const menuWidth = 200
@@ -130,6 +130,10 @@ onMounted(() => {
     camera.updateProjectionMatrix()
     renderer.setSize(changeWidth, window.innerHeight)
   }
+})
+onUnmounted(() => {
+  // 隐藏gui
+  gui.hide()
 })
 </script>
 
