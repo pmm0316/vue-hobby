@@ -8,6 +8,16 @@ const menuList = [
     url: '/home'
   },
   {
+    name: 'Echarts',
+    url: '/echarts',
+    children: [
+      {
+        name: 'BasicChart',
+        url: '/echarts/basicChart'
+      },
+    ]
+  },
+  {
     name: 'Threejs',
     url: '/threejs',
     children: [

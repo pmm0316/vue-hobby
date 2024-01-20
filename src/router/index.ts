@@ -1,13 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import SmartPark from '../views/SmartPark.vue'
-import CarShowroom from '../views/CarShowroom.vue'
-import Keyframes from '../views/Keyframes.vue'
-import CesiumDemo from '../views/CesiumDemo.vue'
 import HomePage from '../views/HomePage.vue'
 import HelloCesium from '@/views/HelloCesium.vue'
-import TechnologyStack from '@/views/TechnologyStack.vue'
 import BoxGeometry from '@/views/threejs/BoxGeometry.vue'
 import BufferGeomery from '@/views/threejs/BufferGeomery.vue'
+import BasicChart from '@/views/echarts/BasicChart.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -37,21 +33,11 @@ const router = createRouter({
       name: 'helloCesium',
       component: HelloCesium
     },
-    // {
-    //   path: '/threejs/keyframes',
-    //   name: 'keyframes',
-    //   component: Keyframes
-    // },
-    // {
-    //   path: '/threejs/technologyStack',
-    //   name: 'TechnologyStack',
-    //   component: TechnologyStack
-    // },
-    // {
-    //   path: '/cesiumDemo',
-    //   name: 'cesiumDemo',
-    //   component: CesiumDemo
-    // },
+    {
+      path: '/echarts/basicChart',
+      name: 'basicChart',
+      component: BasicChart
+    },
   ]
 })
 
