@@ -4,6 +4,8 @@
 <script setup lang="ts">
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
+// 引入性能监视器
+import Stats from 'three/addons/libs/stats.module.js'
 import { ref, onMounted } from 'vue'
 
 const container = ref<any>(null)
@@ -53,22 +55,27 @@ renderer.render(scene, camera)
 // 创建相机轨道控制器
 // const controls = new OrbitControls(camera, renderer.domElement)
 
+// 创建性能监测
+const stats = new Stats()
 // const clock = new THREE.Clock()
-function render() {
-  // const delta = clock.getDelta() * 1000 //毫秒
-  // console.log('delta', delta)
-
-  mesh.rotateY(0.01)
-  renderer.render(scene, camera)
-  requestAnimationFrame(render)
-}
 
 onMounted(() => {
   if (!container.value) return
   container.value.appendChild(renderer.domElement)
+
+  // statsWrapper.value.appendChild(stats.dom)
   // controls.addEventListener("change", () => {
   //   renderer.render(scene, camera)
   // })
+  function render() {
+    // const delta = clock.getDelta() * 1000 //毫秒
+    // console.log('delta', delta)
+    stats.update()
+    mesh.rotateY(0.01)
+    renderer.render(scene, camera)
+    requestAnimationFrame(render)
+  }
+
   render()
   window.onresize = function () {
     console.log('1')
@@ -81,7 +88,4 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.tsContainer {
-  height: calc(100vh - 40px);
-}
 </style>
