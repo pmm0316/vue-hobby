@@ -1,13 +1,14 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHashHistory } from 'vue-router'
 import HomePage from '../views/HomePage.vue'
 import HelloCesium from '@/views/HelloCesium.vue'
 import BoxGeometry from '@/views/threejs/BoxGeometry.vue'
 import BufferGeomery from '@/views/threejs/BufferGeomery.vue'
 import BasicChart from '@/views/echarts/BasicChart.vue'
 import ZhejiangMap from '@/views/echarts/ZhejiangMap.vue'
+import BasicMap from '@/views/gaode/basicMap.vue'
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  history: createWebHashHistory(import.meta.env.BASE_URL),
   strict: true,
   routes: [
     {
@@ -43,6 +44,11 @@ const router = createRouter({
       path: '/echarts/zjMap',
       name: 'zhejiangMap',
       component: ZhejiangMap
+    },
+    {
+      path: '/gaode/basicMap',
+      name: 'basicMap',
+      component: BasicMap
     },
   ]
 })
