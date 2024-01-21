@@ -7,10 +7,9 @@ const handleOpen = () => {}
 
 const handleClose = () => {}
 
-const handleClickMenu = (url: string) => {
-  console.log('url', url)
+const handleClickMenu = (path: string) => {
   router.push({
-    path: url
+    path: path
   })
 }
 </script>
@@ -24,22 +23,22 @@ const handleClickMenu = (url: string) => {
       @open="handleOpen"
       @close="handleClose"
     >
-      <div v-for="(item) in menuList" :key="item.url">
+      <div v-for="(item) in menuList" :key="item.path">
         <template v-if="item.children">
-          <el-sub-menu :key="item.url" :index="item.url">
+          <el-sub-menu :key="item.path" :index="item.path">
             <template #title>{{ item.name }}</template>
             <el-menu-item
               v-for="cItem in item.children"
-              :index="cItem.url"
-              :key="cItem.url"
-              @click="handleClickMenu(cItem.url)"
+              :index="cItem.path"
+              :key="cItem.path"
+              @click="handleClickMenu(cItem.path)"
             >
               {{ cItem.name }}
             </el-menu-item>
           </el-sub-menu>
         </template>
         <template v-else>
-          <el-menu-item :index="item.url" :key="item.url" @click="handleClickMenu(item.url)">
+          <el-menu-item :index="item.path" :key="item.path" @click="handleClickMenu(item.path)">
             {{ item.name }}
           </el-menu-item>
         </template>

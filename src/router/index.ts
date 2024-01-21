@@ -1,11 +1,4 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
-import HomePage from '../views/HomePage.vue'
-import HelloCesium from '@/views/HelloCesium.vue'
-import BoxGeometry from '@/views/threejs/BoxGeometry.vue'
-import BufferGeomery from '@/views/threejs/BufferGeomery.vue'
-import BasicChart from '@/views/echarts/BasicChart.vue'
-import ZhejiangMap from '@/views/echarts/ZhejiangMap.vue'
-import BasicMap from '@/views/gaode/basicMap.vue'
 
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
@@ -18,38 +11,43 @@ const router = createRouter({
     {
       path: '/home',
       name: 'Home',
-      component: HomePage
+      component: () => import('@/views/HomePage.vue')
     },
     {
       path: '/threejs/boxGeometry',
       name: 'BoxGeometry',
-      component: BoxGeometry
+      component: () => import('@/views/threejs/BoxGeometry.vue')
     },
     {
       path: '/threejs/bufferGeometry',
       name: 'BufferGeometry',
-      component: BufferGeomery
+      component: () => import('@/views/threejs/BufferGeomery.vue')
+    },
+    {
+      path: '/threejs/bmwCar',
+      name: '宝马',
+      component: () => import('@/views/threejs/CarShowroom.vue')
     },
     {
       path: '/cesium/helloCesium',
       name: 'helloCesium',
-      component: HelloCesium
+      component: () => import('@/views/HelloCesium.vue')
     },
     {
       path: '/echarts/basicChart',
       name: 'basicChart',
-      component: BasicChart
+      component: () => import('@/views/echarts/BasicChart.vue')
     },
     {
       path: '/echarts/zjMap',
       name: 'zhejiangMap',
-      component: ZhejiangMap
+      component: () => import('@/views/echarts/ZhejiangMap.vue')
     },
     {
       path: '/gaode/basicMap',
       name: 'basicMap',
-      component: BasicMap
-    },
+      component: () => import('@/views/gaode/basicMap.vue')
+    }
   ]
 })
 

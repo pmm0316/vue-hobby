@@ -1,53 +1,63 @@
-export const menuList = [
+type MenuType = {
+  name: string
+  path: string
+  children?: MenuType[]
+}
+
+export const menuList: MenuType[] = [
   {
     name: '首页',
-    url: '/home'
+    path: '/home'
   },
   {
     name: 'Echarts',
-    url: '/echarts',
+    path: '/echarts',
     children: [
       {
         name: '基础图表',
-        url: '/echarts/basicChart'
+        path: '/echarts/basicChart'
       },
       {
         name: '浙江地图',
-        url: '/echarts/zjMap'
-      },
+        path: '/echarts/zjMap'
+      }
     ]
   },
   {
     name: '高德地图',
-    url: '/gaode',
+    path: '/gaode',
     children: [
       {
         name: '基础地图',
-        url: '/gaode/basicMap'
-      },
+        path: '/gaode/basicMap'
+      }
     ]
   },
   {
     name: 'Threejs',
-    url: '/threejs',
+    path: '/threejs',
     children: [
       {
         name: 'BoxGeometry',
-        url: '/threejs/boxGeometry'
+        path: '/threejs/boxGeometry'
       },
       {
         name: 'BufferGeometry',
-        url: '/threejs/bufferGeometry'
+        path: '/threejs/bufferGeometry'
       },
+      {
+        name: '宝马',
+        path: '/threejs/bmwCar'
+      }
     ]
   },
   {
     name: 'Cesium',
-    url: '/cesium',
+    path: '/cesium',
     children: [
       {
         name: 'HelloCesium',
-        url: '/cesium/helloCesium'
+        path: '/cesium/helloCesium'
       }
     ]
   }

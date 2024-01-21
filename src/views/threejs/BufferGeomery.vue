@@ -37,27 +37,34 @@ const vertices = new Float32Array([
 const attribue = new THREE.BufferAttribute(vertices, 3)
 bufferGeomery.attributes.position = attribue
 
-const pointsMaterial = new THREE.PointsMaterial({
-  color: 0xff0000,
-  size: 10
-})
+// const pointsMaterial = new THREE.PointsMaterial({
+//   color: 0xff0000,
+//   size: 10
+// })
 
 // 线条材质
-const lineMaterial = new THREE.LineBasicMaterial({
+// const lineMaterial = new THREE.LineBasicMaterial({
+//   color: 0xff0000
+// })
+
+const material = new THREE.MeshBasicMaterial({
   color: 0xff0000,
+  side: THREE.DoubleSide, // 双面可见
 })
 
-const points = new THREE.Points(bufferGeomery, pointsMaterial)
+// const points = new THREE.Points(bufferGeomery, pointsMaterial)
 
-const line = new THREE.Line(bufferGeomery, lineMaterial)
+// const line = new THREE.Line(bufferGeomery, lineMaterial)
 
-const lineLoop = new THREE.LineLoop(bufferGeomery, lineMaterial)
+// const lineLoop = new THREE.LineLoop(bufferGeomery, material)
+const mesh = new THREE.Mesh(bufferGeomery, material)
 
-scene.add(points)
-scene.add(lineLoop)
+// scene.add(points)
+// scene.add(lineLoop)
+scene.add(mesh)
 
 const camera = new THREE.PerspectiveCamera(30, width / height, 0.1, 3000)
-camera.position.set(200, 200, 200)
+camera.position.set(300, 300, 300)
 camera.lookAt(0, 0, 0)
 
 const renderer = new THREE.WebGLRenderer()
@@ -75,7 +82,7 @@ scene.add(axesHelper)
 onMounted(() => {
   if (!container.value) return
   container.value.appendChild(renderer.domElement)
- 
+
   controls.addEventListener('change', () => {
     renderer.render(scene, camera)
   })
