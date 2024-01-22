@@ -2,6 +2,7 @@
 import { onMounted } from 'vue'
 // 引入高德地图
 import AMapLoader from '@amap/amap-jsapi-loader'
+// @ts-ignore
 import { gaodeKey, gaodeWebKey } from '@/configData/gaode'
 
 

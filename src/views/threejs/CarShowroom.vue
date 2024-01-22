@@ -7,6 +7,7 @@ import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js'
 import * as TWEEN from 'three/examples/jsm/libs/tween.module.js'
+import { Math } from 'cesium'
 
 const { innerHeight, innerWidth } = window
 
@@ -15,6 +16,8 @@ let canvasDom = ref<any>(null)
 let carColor = ref<string>('#EF3507')
 // 轮毂颜色
 let wheelColor = ref<string>('#3735BA')
+
+let clearcoatRoughness = ref<number>(0)
 
 // 创建场景
 const scene = new THREE.Scene()
@@ -32,6 +35,10 @@ renderer.setSize(window.innerWidth - 200, window.innerHeight)
 
 // 创建轨道控制器
 let controls = new OrbitControls(camera, renderer.domElement)
+// 设置顶部转动的最大角度
+controls.maxAzimuthAngle = Math.PI
+// 设置底部转动的最小角度
+controls.maxPolarAngle = Math.PI / 2
 
 function render() {
   renderer.render(scene, camera)
@@ -57,7 +64,7 @@ const bodyMaterial = new THREE.MeshPhysicalMaterial({
   roughness: 0.5,
   // 清漆
   clearcoat: 1,
-  clearcoatRoughness: 0
+  clearcoatRoughness: clearcoatRoughness.value
 })
 
 const fontMaterial = new THREE.MeshPhysicalMaterial({
@@ -68,7 +75,7 @@ const fontMaterial = new THREE.MeshPhysicalMaterial({
   roughness: 0.5,
   // 清漆
   clearcoat: 1,
-  clearcoatRoughness: 0
+  clearcoatRoughness: clearcoatRoughness.value
 })
 
 const hoodMaterial = new THREE.MeshPhysicalMaterial({
@@ -79,7 +86,7 @@ const hoodMaterial = new THREE.MeshPhysicalMaterial({
   roughness: 0.5,
   // 清漆
   clearcoat: 1,
-  clearcoatRoughness: 0
+  clearcoatRoughness: clearcoatRoughness.value
 })
 
 const wheelsMaterial = new THREE.MeshPhysicalMaterial({
@@ -99,17 +106,6 @@ const glassMaterial = new THREE.MeshPhysicalMaterial({
   transmission: 1,
   transparent: true
 })
-
-const materials: any[] = [
-  { name: '磨砂', value: 1 },
-  { name: '冰晶', value: 0 }
-]
-
-const selectMaterial = (item: any) => {
-  bodyMaterial.clearcoatRoughness = item.value
-  fontMaterial.clearcoatRoughness = item.value
-  hoodMaterial.clearcoatRoughness = item.value
-}
 
 // 灯光定位数组
 const lightPositionGroup: Array<number>[] = [
@@ -200,6 +196,13 @@ watch(wheelColor, async (newColor) => {
   console.log('newColor', newColor)
   wheelsMaterial.color.set(newColor)
 })
+watch(clearcoatRoughness, async (newValue) => {
+  console.log('newValue', newValue)
+
+  bodyMaterial.clearcoatRoughness = newValue
+  fontMaterial.clearcoatRoughness = newValue
+  hoodMaterial.clearcoatRoughness = newValue
+})
 </script>
 
 <template>
@@ -210,6 +213,13 @@ watch(wheelColor, async (newColor) => {
         <div>车身颜色 <el-color-picker v-model="carColor" /></div>
         <div>轮毂颜色 <el-color-picker v-model="wheelColor" /></div>
       </el-space>
+      <div>
+        <span>材质：</span>
+        <el-radio-group v-model="clearcoatRoughness">
+          <el-radio :label="0">冰晶</el-radio>
+          <el-radio :label="1">磨砂</el-radio>
+        </el-radio-group>
+      </div>
     </div>
   </div>
 </template>
@@ -217,6 +227,8 @@ watch(wheelColor, async (newColor) => {
 <style scoped>
 .action-wrapper {
   position: fixed;
+  display: flex;
+  flex-direction: column;
   top: 0;
   right: 0;
   padding: 8px 3px 8px 15px;
