@@ -47,6 +47,11 @@ const router = createRouter({
       path: '/gaode/basicMap',
       name: 'basicMap',
       component: () => import('@/views/gaode/basicMap.vue')
+    },
+    {
+      path: '/threejs/penaltyGame',
+      name: 'penaltyGame',
+      component: () => import('@/views/threejs/PenaltyGame.vue')
     }
   ]
 })

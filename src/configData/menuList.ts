@@ -48,6 +48,10 @@ export const menuList: MenuType[] = [
       {
         name: '宝马',
         path: '/threejs/bmwCar'
+      },
+      {
+        name: '点球游戏',
+        path: '/threejs/penaltyGame'
       }
     ]
   },
