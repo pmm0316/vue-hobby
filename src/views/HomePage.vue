@@ -101,7 +101,7 @@ const tableData = [
   },
   {
     companyName: '浙江惠融网络科技',
-    workingTime: '2015.07-2017.12',
+    workingTime: '2015.07-2017.10',
     post: 'java开发工程师'
   }
 ]
