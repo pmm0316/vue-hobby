@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, watch, ref } from 'vue'
+import { onMounted, onUnmounted, ref } from 'vue'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js'
@@ -10,7 +10,7 @@ import { MeshGouraudMaterial } from 'three/examples/jsm/Addons.js'
 const api = { state: 'Walking' }
 const states = ['Idle', 'Walking', 'Running', 'Dance', 'Death', 'Sitting', 'Standing']
 // const statesName = ['Idle', '走路', '奔跑', '跳舞', '死亡', 'Sitting', 'Standing']
-let stats, gui, mixer: any, actions: any, activeAction: any, previousAction
+let stats, gui: any, mixer: any, actions: any, activeAction: any, previousAction
 const container = ref()
 const scene = new THREE.Scene()
 // 设置场景背景色
@@ -66,7 +66,7 @@ function animate() {
 
 function createGUI(model: any, animations: any[]) {
   
-  const gui = new GUI()
+  gui = new GUI()
 
   mixer = new THREE.AnimationMixer(model)
   actions = {}
@@ -114,6 +114,9 @@ onMounted(() => {
     createGUI(model, gltf.animations)
   })
   animate()
+})
+onUnmounted(() => {
+  gui.hide()
 })
 </script>
 <template>
