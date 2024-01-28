@@ -52,6 +52,10 @@ export const menuList: MenuType[] = [
       {
         name: '点球游戏',
         path: '/threejs/penaltyGame'
+      },
+      {
+        name: '卡通机器人',
+        path: '/threejs/cartoonRobot'
       }
     ]
   },

@@ -52,7 +52,12 @@ const router = createRouter({
       path: '/threejs/penaltyGame',
       name: 'penaltyGame',
       component: () => import('@/views/threejs/PenaltyGame.vue')
-    }
+    },
+    {
+      path: '/threejs/cartoonRobot',
+      name: 'cartoonRobot',
+      component: () => import('@/views/threejs/CartoonRobot.vue')
+    },
   ]
 })
 
