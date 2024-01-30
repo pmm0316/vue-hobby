@@ -46,8 +46,8 @@ export const menuList: MenuType[] = [
         path: '/threejs/bufferGeometry'
       },
       {
-        name: '宝马',
-        path: '/threejs/bmwCar'
+        name: '汽车展厅',
+        path: '/threejs/carShowroom'
       },
       {
         name: '点球游戏',

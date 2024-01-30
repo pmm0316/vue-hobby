@@ -24,8 +24,8 @@ const router = createRouter({
       component: () => import('@/views/threejs/BufferGeomery.vue')
     },
     {
-      path: '/threejs/bmwCar',
-      name: '宝马',
+      path: '/threejs/carShowroom',
+      name: 'carShowroom',
       component: () => import('@/views/threejs/CarShowroom.vue')
     },
     {

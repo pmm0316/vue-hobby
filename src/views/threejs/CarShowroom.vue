@@ -7,233 +7,269 @@ import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js'
 import * as TWEEN from 'three/examples/jsm/libs/tween.module.js'
-import { Math } from 'cesium'
 
 const { innerHeight, innerWidth } = window
 
-let canvasDom = ref<any>(null)
-// 车身颜色
-let carColor = ref<string>('#EF3507')
-// 轮毂颜色
-let wheelColor = ref<string>('#3735BA')
+let container = ref<any>(null)
+let scene: THREE.Scene | null = null
+let camera: THREE.PerspectiveCamera | null = null
+let renderer: THREE.WebGLRenderer | null = null
+let orbitControls: OrbitControls
 
-let clearcoatRoughness = ref<number>(0)
+const doors: any[] = []
 
-// 创建场景
-const scene = new THREE.Scene()
-
-// 创建相机
-const camera = new THREE.PerspectiveCamera(75, innerWidth / innerHeight, 0.1, 1000)
-camera.position.set(0, 2, 4)
-
-// 创建渲染器
-const renderer = new THREE.WebGLRenderer({
-  // 抗锯齿
-  antialias: true
+// 车身材质
+const bodyMaterial = new THREE.MeshPhysicalMaterial({
+  color: 'red',
+  metalness: 1,
+  roughness: 0.5,
+  clearcoat: 1,
+  clearcoatRoughness: 0.03
 })
-renderer.setSize(window.innerWidth - 200, window.innerHeight)
 
-// 创建轨道控制器
-let controls = new OrbitControls(camera, renderer.domElement)
-// 设置顶部转动的最大角度
-controls.maxAzimuthAngle = Math.PI
-// 设置底部转动的最小角度
-controls.maxPolarAngle = Math.PI / 2
+// 玻璃材质
+const glassMaterial = new THREE.MeshPhysicalMaterial({
+  color: '#793e3e',
+  metalness: 0.25,
+  roughness: 0,
+  transmission: 1 // 透光性
+})
 
-function render() {
-  renderer.render(scene, camera)
-  requestAnimationFrame(render)
-  // cube.rotation.x += 0.01
-  // cube.rotation.y += 0.01
-  // controls.update()
-  // 渲染
-  controls && controls.update()
-  // 更新
-  // tween.update()
+// 初始化场景
+const initScene = () => {
+  scene = new THREE.Scene()
 }
 
-let wheels = []
-let carBody, frontCar, hoodCar, glassCar
+// 初始化相机
+const initCamera = () => {
+  camera = new THREE.PerspectiveCamera(45, (innerWidth - 200) / innerHeight, 0.1, 1000)
+  camera.position.set(4.25, 1.4, -4.5)
+}
 
-// 创建材质
-const bodyMaterial = new THREE.MeshPhysicalMaterial({
-  color: carColor.value,
-  // 金属感
-  metalness: 1,
-  // 粗糙度
-  roughness: 0.5,
-  // 清漆
-  clearcoat: 1,
-  clearcoatRoughness: clearcoatRoughness.value
-})
+// 初始化渲染器
+const initRenderer = () => {
+  renderer = new THREE.WebGLRenderer({
+    antialias: true
+  })
+  renderer.setSize(innerWidth - 200, innerHeight)
+  if (container.value) {
+    container.value.appendChild(renderer.domElement)
+  }
+}
+// 初始化坐标轴
+const initAxesHelper = () => {
+  // 创建一个三维坐标轴
+  const axesHelper = new THREE.AxesHelper(3)
+  scene?.add(axesHelper)
+}
 
-const fontMaterial = new THREE.MeshPhysicalMaterial({
-  color: carColor.value,
-  // 金属感
-  metalness: 1,
-  // 粗糙度
-  roughness: 0.5,
-  // 清漆
-  clearcoat: 1,
-  clearcoatRoughness: clearcoatRoughness.value
-})
+// 初始化轨道控制器
+const initOrbitControls = () => {
+  if (camera && renderer) {
+    orbitControls = new OrbitControls(camera, renderer.domElement)
+    orbitControls.enableDamping = true
 
-const hoodMaterial = new THREE.MeshPhysicalMaterial({
-  color: carColor.value,
-  // 金属感
-  metalness: 1,
-  // 粗糙度
-  roughness: 0.5,
-  // 清漆
-  clearcoat: 1,
-  clearcoatRoughness: clearcoatRoughness.value
-})
+    orbitControls.maxDistance = 9 // 最大
+    orbitControls.minDistance = 1 // 最小
+    orbitControls.minPolarAngle = 0
+    orbitControls.maxPolarAngle = (80 / 360) * 2 * Math.PI
+  }
+}
 
-const wheelsMaterial = new THREE.MeshPhysicalMaterial({
-  color: wheelColor.value,
-  // 金属感
-  metalness: 1,
-  // 粗糙度
-  roughness: 0.1
-})
+const init = () => {
+  initScene()
+  initCamera()
+  initRenderer()
+  initAxesHelper()
+  initOrbitControls()
+  // initGridHelper()
+  loadCarModel()
+  initAmbientLight()
+  initFloor()
+  initSpotLight()
+  initCylinder()
+  initGUI()
+}
 
-const glassMaterial = new THREE.MeshPhysicalMaterial({
-  color: '#FFFFFF',
-  metalness: 0,
-  // 粗糙度
-  roughness: 0.01,
-  // opacity: 1,
-  transmission: 1,
-  transparent: true
-})
+const render = (time?: number | undefined) => {
+  if (scene && camera) {
+    renderer?.render(scene, camera)
+  }
+  orbitControls.update()
+  TWEEN.update(time)
+  requestAnimationFrame(render)
+}
 
-// 灯光定位数组
-const lightPositionGroup: Array<number>[] = [
-  [0, 0, 10],
-  [0, 0, -10],
-  [-10, 0, 0],
-  [10, 0, 0],
-  [0, 10, 0],
-  [5, 10, 0],
-  [0, 10, 5],
-  [0, 10, -5],
-  [-5, 10, 0]
-]
+const resizeView = () => {
+  window.addEventListener('resize', () => {
+    if (camera) {
+      camera.aspect = (window.innerWidth - 200) / window.innerHeight
+      camera.updateProjectionMatrix()
+    }
+    renderer?.setSize(window.innerWidth - 200, window.innerHeight)
+  })
+}
 
-onMounted(() => {
-  if (!canvasDom.value) return
-  // 将渲染器插入到dom中
-  canvasDom?.value.appendChild(renderer.domElement)
+const initGridHelper = () => {
+  const grid = new THREE.GridHelper(20, 40, 'red', 0xffffff)
+  grid.material.opacity = 0.2
+  grid.material.transparent = true
+  scene?.add(grid)
+}
 
-  // 初始化渲染器，渲染背景
-  renderer.setClearColor('#000')
-  scene.background = new THREE.Color('#CCC')
-  // scene.environment = new THREE.Color('#ccc')
-  render()
-
-  // 添加网格地面
-  const gridHelper = new THREE.GridHelper(10, 10)
-  gridHelper.material.opacity = 0.2
-  gridHelper.material.transparent = true
-  scene.add(gridHelper)
-
-  // 添加汽车模型
-  const loader = new GLTFLoader()
-  const dracoLoader = new DRACOLoader()
-  dracoLoader.setDecoderPath('./draco/')
-  loader.setDRACOLoader(dracoLoader)
-  // D:\project\threejs-demo\public\model\bmw01.glb
-  loader.load('./models/bmw.glb', (gltf) => {
-    const bmw = gltf.scene
-    console.log('gltf', gltf)
-    bmw.traverse((child: any) => {
-      if (child.isMesh) {
-        // console.log(child.name)
-      }
-      if (child.isMesh) {
-        // 判断是否是轮毂
-        if (child.name.includes('轮毂')) {
-          child.material = wheelsMaterial
-          wheels.push(child)
-        }
-        // 判断是否是车身
-        if (child.name.includes('Mesh002')) {
-          child.material = bodyMaterial
-          carBody = child
-        }
-        // 判断是否是前脸
-        if (child.name.includes('前脸')) {
-          child.material = fontMaterial
-          frontCar = child
-        }
-        // 判断是否是引擎盖
-        if (child.name.includes('引擎盖_1')) {
-          child.material = hoodMaterial
-          hoodCar = child
-        }
-        // 判断是否是挡风玻璃
-        if (child.name.includes('挡风玻璃')) {
-          child.material = glassMaterial
-          hoodCar = child
-        }
+const loadCarModel = () => {
+  const glftLoader = new GLTFLoader()
+  glftLoader.load('./models/Lamborghini.glb', (glft) => {
+    const model = glft.scene
+    model.rotation.y = Math.PI
+    model.traverse((obj: any) => {
+      if (['Object_103', 'Object_64', 'Object_77'].includes(obj.name)) {
+        obj.material = bodyMaterial
+      } else if (['Object_90'].includes(obj.name)) {
+        obj.material = glassMaterial
+      } else if (['Empty001_16', 'Empty002_20'].includes(obj.name)) {
+        console.log('obj', obj)
+        doors.push(obj)
       }
     })
-    scene.add(bmw)
+    scene?.add(model)
   })
-  // 添加灯光
-  lightPositionGroup.forEach((item: number[]) => {
-    const light = new THREE.DirectionalLight(0xffffff, 1)
-    light.position.set(item[0], item[1], item[2])
-    scene.add(light)
-  })
-})
-watch(carColor, async (newColor) => {
-  bodyMaterial.color.set(newColor)
-  fontMaterial.color.set(newColor)
-  hoodMaterial.color.set(newColor)
-})
-watch(wheelColor, async (newColor) => {
-  console.log('newColor', newColor)
-  wheelsMaterial.color.set(newColor)
-})
-watch(clearcoatRoughness, async (newValue) => {
-  console.log('newValue', newValue)
+}
 
-  bodyMaterial.clearcoatRoughness = newValue
-  fontMaterial.clearcoatRoughness = newValue
-  hoodMaterial.clearcoatRoughness = newValue
+const initAmbientLight = () => {
+  const light = new THREE.AmbientLight('#ffffff', 0.5)
+  scene?.add(light)
+}
+
+const initFloor = () => {
+  const planeGeometry = new THREE.PlaneGeometry(20, 20)
+  const material = new THREE.MeshPhysicalMaterial({
+    side: THREE.DoubleSide,
+    color: 0x808080,
+    metalness: 0,
+    roughness: 0.1
+  })
+  const mesh = new THREE.Mesh(planeGeometry, material)
+  mesh.rotation.x = Math.PI / 2
+  scene?.add(mesh)
+}
+
+const initSpotLight = () => {
+  const spotLight = new THREE.SpotLight('#ffffff', 100)
+  spotLight.angle = Math.PI / 8 // 散射角度，跟水平线的夹角
+  spotLight.penumbra = 0.2 //横向：聚光锥的半影衰减百分比
+  spotLight.decay = 2 // 纵向：沿着光照距离的衰减量
+  spotLight.distance = 30
+  spotLight.shadow.radius = 10
+  // 阴影映射宽度，阴影映射高度
+  spotLight.shadow.mapSize.set(4096, 4096)
+  spotLight.position.set(-5, 10, 1)
+  // 光照射的方向
+  spotLight.target.position.set(0, 0, 0)
+  spotLight.castShadow = true
+  scene?.add(spotLight)
+}
+
+const initCylinder = () => {
+  const cylinderGeometry = new THREE.CylinderGeometry(12, 12, 20, 32)
+  const material = new THREE.MeshPhysicalMaterial({
+    color: 0x6c6c6c,
+    side: THREE.DoubleSide
+  })
+  const mesh = new THREE.Mesh(cylinderGeometry, material)
+  scene?.add(mesh)
+}
+
+const initGUI = () => {
+  const obj = {
+    bodyColor: '#6e2121',
+    glassColor: '#aaa',
+    carRightOpen: false,
+    carLeftOpen: false,
+    carIn: false
+  }
+  const gui = new GUI()
+  gui
+    .addColor(obj, 'bodyColor')
+    .name('车身颜色')
+    .onChange((value) => {
+      bodyMaterial.color.set(value)
+    })
+  gui
+    .addColor(obj, 'glassColor')
+    .name('玻璃颜色')
+    .onChange((value) => {
+      glassMaterial.color.set(value)
+    })
+  gui
+    .add(obj, 'carRightOpen')
+    .name('打开右车门')
+    .onChange((value) => {
+      console.log('carOpen', value)
+      if (value) {
+        setAnimationDoor({ x: 0 }, { x: Math.PI / 3 }, doors[1])
+      } else {
+        setAnimationDoor({ x: Math.PI / 3 }, { x: 0 }, doors[1])
+      }
+    })
+  gui
+    .add(obj, 'carLeftOpen')
+    .name('打开左车门')
+    .onChange((value) => {
+      console.log('carLeftOpen', value)
+      if (value) {
+        setAnimationDoor({ x: 0 }, { x: Math.PI / 3 }, doors[0])
+      } else {
+        // carClose()
+        setAnimationDoor({ x: Math.PI / 3 }, { x: 0 }, doors[0])
+      }
+    })
+
+  gui
+    .add(obj, 'carIn')
+    .name('车内视角')
+    .onChange((value) => {
+      if (value) {
+        setAnimationCamera(
+          { cx: 4.25, cy: 1.4, cz: -4.5, ox: 0, oy: 0.5, oz: 0 },
+          { cx: -0.27, cy: 0.83, cz: 0.6, ox: 0, oy: 0.5, oz: -3 }
+        )
+      } else {
+        setAnimationCamera(
+          { cx: -0.27, cy: 0.83, cz: 0.6, ox: 0, oy: 0.5, oz: -3 },
+          { cx: 4.25, cy: 1.4, cz: -4.5, ox: 0, oy: 0.5, oz: 0 }
+        )
+      }
+    })
+}
+
+const setAnimationDoor = (start: { x: number }, end: { x: number }, mesh: any) => {
+  const tween = new TWEEN.Tween(start).to(end, 1000).easing(TWEEN.Easing.Quadratic.Out)
+  tween.onUpdate((that) => {
+    mesh.rotation.x = that.x
+  })
+  tween.start()
+}
+
+function setAnimationCamera(start: any, end: { [x: string]: any }) {
+  const tween = new TWEEN.Tween(start).to(end, 3000).easing(TWEEN.Easing.Quadratic.Out)
+  tween.onUpdate((that) => {
+    //  camera.postition  和 controls.target 一起使用
+    camera?.position.set(that.cx, that.cy, that.cz)
+    orbitControls.target.set(that.ox, that.oy, that.oz)
+  })
+  tween.start()
+}
+
+onMounted(() => {
+  init()
+  render()
+  resizeView()
 })
 </script>
 
 <template>
-  <div class="bmw-wrapper">
-    <div class="canvas-container" ref="canvasDom"></div>
-    <div class="action-wrapper">
-      <el-space :size="15">
-        <div>车身颜色 <el-color-picker v-model="carColor" /></div>
-        <div>轮毂颜色 <el-color-picker v-model="wheelColor" /></div>
-      </el-space>
-      <div>
-        <span>材质：</span>
-        <el-radio-group v-model="clearcoatRoughness">
-          <el-radio :label="0">冰晶</el-radio>
-          <el-radio :label="1">磨砂</el-radio>
-        </el-radio-group>
-      </div>
-    </div>
-  </div>
+  <div class="container" ref="container"></div>
 </template>
 
-<style scoped>
-.action-wrapper {
-  position: fixed;
-  display: flex;
-  flex-direction: column;
-  top: 0;
-  right: 0;
-  padding: 8px 3px 8px 15px;
-  display: flex;
-  background: #000;
-  color: #fff;
-}
-</style>
+<style scoped></style>
