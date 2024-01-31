@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, watch, ref } from 'vue'
+import { onMounted, onUnmounted, ref } from 'vue'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js'
@@ -8,6 +8,8 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js'
 import * as TWEEN from 'three/examples/jsm/libs/tween.module.js'
 
+let leftDoorState = false
+let rightDoorState = false
 const { innerHeight, innerWidth } = window
 
 let container = ref<any>(null)
@@ -15,6 +17,7 @@ let scene: THREE.Scene | null = null
 let camera: THREE.PerspectiveCamera | null = null
 let renderer: THREE.WebGLRenderer | null = null
 let orbitControls: OrbitControls
+let gui: GUI
 
 const doors: any[] = []
 
@@ -52,6 +55,8 @@ const initRenderer = () => {
     antialias: true
   })
   renderer.setSize(innerWidth - 200, innerHeight)
+  // 渲染阴影
+  renderer.shadowMap.enabled = true
   if (container.value) {
     container.value.appendChild(renderer.domElement)
   }
@@ -80,7 +85,7 @@ const init = () => {
   initScene()
   initCamera()
   initRenderer()
-  initAxesHelper()
+  // initAxesHelper()
   initOrbitControls()
   // initGridHelper()
   loadCarModel()
@@ -131,6 +136,8 @@ const loadCarModel = () => {
         console.log('obj', obj)
         doors.push(obj)
       }
+      // 模型阴影
+      obj.castShadow = true
     })
     scene?.add(model)
   })
@@ -151,11 +158,14 @@ const initFloor = () => {
   })
   const mesh = new THREE.Mesh(planeGeometry, material)
   mesh.rotation.x = Math.PI / 2
+  // 接收阴影
+  mesh.receiveShadow = true
   scene?.add(mesh)
 }
 
 const initSpotLight = () => {
   const spotLight = new THREE.SpotLight('#ffffff', 100)
+  
   spotLight.angle = Math.PI / 8 // 散射角度，跟水平线的夹角
   spotLight.penumbra = 0.2 //横向：聚光锥的半影衰减百分比
   spotLight.decay = 2 // 纵向：沿着光照距离的衰减量
@@ -168,6 +178,17 @@ const initSpotLight = () => {
   spotLight.target.position.set(0, 0, 0)
   spotLight.castShadow = true
   scene?.add(spotLight)
+  const spotLight2 = new THREE.SpotLight('#ffffff', 100)
+  spotLight2.target.position.set(0, 0, 0)
+  spotLight2.shadow.radius = 10
+  spotLight2.castShadow = true
+  spotLight2.position.set(5, 10, 1)
+  scene?.add(spotLight2)
+  const spotLight3 = new THREE.SpotLight('#ffffff', 100)
+  spotLight3.target.position.set(0, 0, 0)
+  spotLight3.castShadow = true
+  spotLight3.position.set(0, 10, 6)
+  scene?.add(spotLight3)
 }
 
 const initCylinder = () => {
@@ -188,7 +209,7 @@ const initGUI = () => {
     carLeftOpen: false,
     carIn: false
   }
-  const gui = new GUI()
+  gui = new GUI()
   gui
     .addColor(obj, 'bodyColor')
     .name('车身颜色')
@@ -205,24 +226,14 @@ const initGUI = () => {
     .add(obj, 'carRightOpen')
     .name('打开右车门')
     .onChange((value) => {
-      console.log('carOpen', value)
-      if (value) {
-        setAnimationDoor({ x: 0 }, { x: Math.PI / 3 }, doors[1])
-      } else {
-        setAnimationDoor({ x: Math.PI / 3 }, { x: 0 }, doors[1])
-      }
+      setRightDoorState(value)
     })
   gui
     .add(obj, 'carLeftOpen')
     .name('打开左车门')
     .onChange((value) => {
       console.log('carLeftOpen', value)
-      if (value) {
-        setAnimationDoor({ x: 0 }, { x: Math.PI / 3 }, doors[0])
-      } else {
-        // carClose()
-        setAnimationDoor({ x: Math.PI / 3 }, { x: 0 }, doors[0])
-      }
+      setLeftDoorState(value)
     })
 
   gui
@@ -243,6 +254,30 @@ const initGUI = () => {
     })
 }
 
+// 左车门状态
+const setLeftDoorState = (bool: boolean) => {
+  const openingAngle = { x: Math.PI / 3 }
+  const closeAngle = { x: 0 }
+  leftDoorState = bool
+  if (bool) {
+    setAnimationDoor(closeAngle, openingAngle, doors[0])
+  } else {
+    setAnimationDoor(openingAngle, closeAngle, doors[0])
+  }
+}
+
+// 右车门状态
+const setRightDoorState = (bool: boolean) => {
+  const openingAngle = { x: Math.PI / 3 }
+  const closeAngle = { x: 0 }
+  if (bool) {
+    setAnimationDoor(closeAngle, openingAngle, doors[1])
+  } else {
+    setAnimationDoor(openingAngle, closeAngle, doors[1])
+  }
+  rightDoorState = bool
+}
+
 const setAnimationDoor = (start: { x: number }, end: { x: number }, mesh: any) => {
   const tween = new TWEEN.Tween(start).to(end, 1000).easing(TWEEN.Easing.Quadratic.Out)
   tween.onUpdate((that) => {
@@ -261,10 +296,38 @@ function setAnimationCamera(start: any, end: { [x: string]: any }) {
   tween.start()
 }
 
+// 监听click
+const monitorClick = () => {
+  window.addEventListener('click', (event) => {
+    const raycaster = new THREE.Raycaster()
+    const pointer = new THREE.Vector2()
+    pointer.x = (event.clientX / window.innerWidth) * 2 - 1
+    pointer.y = -(event.clientY / window.innerHeight) * 2 + 1
+    if (camera && scene) {
+      raycaster.setFromCamera(pointer, camera)
+      const intersects = raycaster.intersectObjects(scene.children)
+      for (let i = 0; i < intersects.length; i++) {
+        const name = intersects[i].object.name
+        console.log('name', name)
+
+        // if (['Object_81'].includes(name)) {
+        //   setRightDoorState(!rightDoorState)
+        // } else if (['Object_103'].includes(name)) {
+        //   setLeftDoorState(!leftDoorState)
+        // }
+      }
+    }
+  })
+}
+
 onMounted(() => {
   init()
   render()
   resizeView()
+  monitorClick()
+})
+onUnmounted(() => {
+  gui.destroy()
 })
 </script>
 
