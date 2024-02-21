@@ -68,5 +68,15 @@ export const menuList: MenuType[] = [
         path: '/cesium/helloCesium'
       }
     ]
+  },
+  {
+    name: 'Vue',
+    path: '/vue',
+    children: [
+      {
+        name: '测试页面',
+        path: '/vue/testPage'
+      }
+    ]
   }
 ]

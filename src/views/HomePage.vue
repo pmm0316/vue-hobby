@@ -59,7 +59,7 @@
     <el-card class="box-card">
       <template #header>
         <div class="card-header">
-          <span>工作经历</span>
+          <span>前端工作经历</span>
         </div>
       </template>
       <el-table :data="tableData">
@@ -99,11 +99,6 @@ const tableData = [
     workingTime: '2018.02-2019.03',
     post: '业务（前端）开发工程师'
   },
-  {
-    companyName: '浙江惠融网络科技',
-    workingTime: '2015.07-2017.10',
-    post: 'java开发工程师'
-  }
 ]
 </script>
 

@@ -58,6 +58,11 @@ const router = createRouter({
       name: 'cartoonRobot',
       component: () => import('@/views/threejs/CartoonRobot.vue')
     },
+    {
+      path: '/vue/testPage',
+      name: 'TestPage',
+      component: () => import('@/views/vue/TestPage.vue')
+    },
   ]
 })
 
