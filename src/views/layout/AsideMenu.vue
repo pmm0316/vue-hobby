@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
-import { menuList } from '../configData/menuList'
+import { menuList } from '../../configData/menuList'
+import routerConfig from '../../router';
 const router = useRouter()
+
+console.log('routerConfig', routerConfig.getRoutes())
 
 const handleOpen = () => {}
 
@@ -12,6 +15,7 @@ const handleClickMenu = (path: string) => {
     path: path
   })
 }
+
 </script>
 <template>
   <el-aside width="200px">

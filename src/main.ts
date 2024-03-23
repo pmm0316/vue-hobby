@@ -5,6 +5,8 @@ import 'cesium/Build/Cesium/Widgets/widgets.css'
 import './assets/main.css'
 import router from './router'
 import { gaodeKey } from './configData/gaode'
+import VueCookies from 'vue-cookies';
+
 
 // @ts-ignore
 window._AMapSecurityConfig = {
@@ -14,5 +16,7 @@ window._AMapSecurityConfig = {
 const app = createApp(App)
 
 app.use(router)
+window.VueCookies = VueCookies
+// app.use(VueCookies)
 
 app.mount('#app')

@@ -7,8 +7,7 @@ defineProps({
   text: String
 })
 const emit = defineEmits(['change'])
-const handleOnChange = (e) => {
-  console.log(e)
+const handleOnChange = () => {
   emit('change', Math.random())
 }
 </script>
