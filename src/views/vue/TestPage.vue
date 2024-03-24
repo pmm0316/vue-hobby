@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import ProTable from '@/components/proTable/index.vue';
 
 const tableData = [
   {
@@ -9,7 +8,7 @@ const tableData = [
     city: 'Los Angeles',
     address: 'No. 189, Grove St, Los Angeles',
     zip: 'CA 90036',
-    tag: 'Home',
+    tag: 'Home'
   },
   {
     date: '2016-05-02',
@@ -18,7 +17,7 @@ const tableData = [
     city: 'Los Angeles',
     address: 'No. 189, Grove St, Los Angeles',
     zip: 'CA 90036',
-    tag: 'Office',
+    tag: 'Office'
   },
   {
     date: '2016-05-04',
@@ -27,7 +26,7 @@ const tableData = [
     city: 'Los Angeles',
     address: 'No. 189, Grove St, Los Angeles',
     zip: 'CA 90036',
-    tag: 'Home',
+    tag: 'Home'
   },
   {
     date: '2016-05-01',
@@ -36,41 +35,39 @@ const tableData = [
     city: 'Los Angeles',
     address: 'No. 189, Grove St, Los Angeles',
     zip: 'CA 90036',
-    tag: 'Office',
-  },
+    tag: 'Office'
+  }
 ]
 
 const columns: any[] = [
   {
     label: '日期',
-    prop: 'date',
+    prop: 'date'
     // width: 150
   },
   {
     label: '名字',
-    prop: 'name',
+    prop: 'name'
     // width: 150
   },
   {
     label: '状态',
-    prop: 'state',
+    prop: 'state'
     // width: 150
   },
   {
     label: '城市',
-    prop: 'city',
+    prop: 'city'
     // width: 150
   },
   {
     label: '地址',
-    prop: 'address',
+    prop: 'address'
     // width: 150
-  },
+  }
 ]
 </script>
 <template>
-  <div>
-    <ProTable :data="tableData" :columns="columns" />
-  </div>
+  <div></div>
 </template>
 <style scoped></style>
