@@ -1,17 +1,38 @@
-import { type RouteComponent } from 'vue-router'
+import { type RouteComponent, type RouteMeta } from 'vue-router'
+
 type MenuType = {
   name: string
   path: string
   children?: MenuType[]
-  // RawRouteComponent
-  component?: RouteComponent
+  component?: RouteComponent,
+  meta?: RouteMeta,
 }
 
 export const menuList: MenuType[] = [
   {
-    name: '首页',
+    name: 'Home',
     path: '/home',
+    meta: {
+      title: '首页'
+    },
     component: () => import('@/views/HomePage.vue')
+  },
+  {
+    name: 'D3',
+    path: '/d3',
+    meta: {
+      title: 'D3.js'
+    },
+    children: [
+      {
+        name: 'BasicD3',
+        path: '/d3/basicD3',
+        component: () => import('@/views/d3/BasicD3.vue'),
+        meta: {
+          title: '基础'
+        }
+      },
+    ]
   },
   {
     name: 'Echarts',

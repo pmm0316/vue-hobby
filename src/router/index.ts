@@ -20,7 +20,7 @@ const router = createRouter({
     },
     {
       path: '/layout',
-      name: 'layout',
+      name: 'Layout',
       meta: {
         title: 'layout'
       },
@@ -32,7 +32,7 @@ const router = createRouter({
 // 根据菜单，动态新增路由
 treeToArray(menuList).forEach((item: RouteRecordRaw) => {
   if (item.component) {
-    router.addRoute('layout', item)
+    router.addRoute('Layout', item)
   }
 })
 
