@@ -1,4 +1,6 @@
-import { createRouter, createWebHashHistory } from 'vue-router'
+import { createRouter, createWebHashHistory, type RouteRecordRaw } from 'vue-router'
+import { menuList } from '../configData/menuList'
+import { treeToArray } from '../utils/utils'
 
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
@@ -17,73 +19,21 @@ const router = createRouter({
       component: () => import('@/views/login/index.vue')
     },
     {
-      path: '/menu',
+      path: '/layout',
+      name: 'layout',
       meta: {
-        title: 'Menu'
+        title: 'layout'
       },
       component: () => import('@/views/layout/index.vue'),
-      children: [
-        {
-          path: '/home',
-          name: 'Home',
-          meta: {
-            title: '首页'
-          },
-          component: () => import('@/views/HomePage.vue')
-        },
-        {
-          path: '/threejs/boxGeometry',
-          name: 'BoxGeometry',
-          component: () => import('@/views/threejs/BoxGeometry.vue')
-        },
-        {
-          path: '/threejs/bufferGeometry',
-          name: 'BufferGeometry',
-          component: () => import('@/views/threejs/BufferGeomery.vue')
-        },
-        {
-          path: '/threejs/carShowroom',
-          name: 'carShowroom',
-          component: () => import('@/views/threejs/CarShowroom.vue')
-        },
-        {
-          path: '/cesium/helloCesium',
-          name: 'helloCesium',
-          component: () => import('@/views/HelloCesium.vue')
-        },
-        {
-          path: '/echarts/basicChart',
-          name: 'basicChart',
-          component: () => import('@/views/echarts/BasicChart.vue')
-        },
-        {
-          path: '/echarts/zjMap',
-          name: 'zhejiangMap',
-          component: () => import('@/views/echarts/ZhejiangMap.vue')
-        },
-        {
-          path: '/gaode/basicMap',
-          name: 'basicMap',
-          component: () => import('@/views/gaode/basicMap.vue')
-        },
-        {
-          path: '/threejs/penaltyGame',
-          name: 'penaltyGame',
-          component: () => import('@/views/threejs/PenaltyGame.vue')
-        },
-        {
-          path: '/threejs/cartoonRobot',
-          name: 'cartoonRobot',
-          component: () => import('@/views/threejs/CartoonRobot.vue')
-        },
-        {
-          path: '/vue/testPage',
-          name: 'TestPage',
-          component: () => import('@/views/vue/TestPage.vue')
-        }
-      ]
     }
   ]
+})
+
+// 根据菜单，动态新增路由
+treeToArray(menuList).forEach((item: RouteRecordRaw) => {
+  if (item.component) {
+    router.addRoute('layout', item)
+  }
 })
 
 router.beforeEach((to, form) => {

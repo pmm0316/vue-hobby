@@ -1,13 +1,17 @@
+import { type RouteComponent } from 'vue-router'
 type MenuType = {
   name: string
   path: string
   children?: MenuType[]
+  // RawRouteComponent
+  component?: RouteComponent
 }
 
 export const menuList: MenuType[] = [
   {
     name: '首页',
-    path: '/home'
+    path: '/home',
+    component: () => import('@/views/HomePage.vue')
   },
   {
     name: 'Echarts',
@@ -15,11 +19,13 @@ export const menuList: MenuType[] = [
     children: [
       {
         name: '基础图表',
-        path: '/echarts/basicChart'
+        path: '/echarts/basicChart',
+        component: () => import('@/views/echarts/BasicChart.vue')
       },
       {
         name: '浙江地图',
-        path: '/echarts/zjMap'
+        path: '/echarts/zjMap',
+        component: () => import('@/views/echarts/ZhejiangMap.vue')
       }
     ]
   },
@@ -29,7 +35,8 @@ export const menuList: MenuType[] = [
     children: [
       {
         name: '基础地图',
-        path: '/gaode/basicMap'
+        path: '/gaode/basicMap',
+        component: () => import('@/views/gaode/basicMap.vue')
       }
     ]
   },
@@ -39,23 +46,28 @@ export const menuList: MenuType[] = [
     children: [
       {
         name: 'BoxGeometry',
-        path: '/threejs/boxGeometry'
+        path: '/threejs/boxGeometry',
+        component: () => import('@/views/threejs/BoxGeometry.vue')
       },
       {
         name: 'BufferGeometry',
-        path: '/threejs/bufferGeometry'
+        path: '/threejs/bufferGeometry',
+        component: () => import('@/views/threejs/BufferGeomery.vue')
       },
       {
         name: '汽车展厅',
-        path: '/threejs/carShowroom'
+        path: '/threejs/carShowroom',
+        component: () => import('@/views/threejs/CarShowroom.vue')
       },
       {
         name: '点球游戏',
-        path: '/threejs/penaltyGame'
+        path: '/threejs/penaltyGame',
+        component: () => import('@/views/threejs/PenaltyGame.vue')
       },
       {
         name: '卡通机器人',
-        path: '/threejs/cartoonRobot'
+        path: '/threejs/cartoonRobot',
+        component: () => import('@/views/threejs/CartoonRobot.vue')
       }
     ]
   },
@@ -65,7 +77,8 @@ export const menuList: MenuType[] = [
     children: [
       {
         name: 'HelloCesium',
-        path: '/cesium/helloCesium'
+        path: '/cesium/helloCesium',
+        component: () => import('@/views/HelloCesium.vue')
       }
     ]
   },
@@ -75,7 +88,8 @@ export const menuList: MenuType[] = [
     children: [
       {
         name: '测试页面',
-        path: '/vue/testPage'
+        path: '/vue/testPage',
+        component: () => import('@/views/vue/TestPage.vue')
       }
     ]
   }
