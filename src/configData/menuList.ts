@@ -108,9 +108,12 @@ export const menuList: MenuType[] = [
     path: '/vue',
     children: [
       {
-        name: '测试页面',
-        path: '/vue/testPage',
-        component: () => import('@/views/vue/TestPage.vue')
+        name: 'TableDemo',
+        path: '/vue/tableDemo',
+        component: () => import('@/views/vue/TableDemo.vue'),
+        meta: {
+          title: '表格演示'
+        }
       }
     ]
   }
