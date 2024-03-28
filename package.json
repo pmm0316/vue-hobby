@@ -16,6 +16,7 @@
     "@amap/amap-jsapi-loader": "^1.0.1",
     "@element-plus/icons-vue": "^2.3.1",
     "@types/d3": "^7.4.3",
+    "axios": "^1.6.8",
     "cannon-es": "^0.20.0",
     "cesium": "^1.113.0",
     "d3": "^7.9.0",

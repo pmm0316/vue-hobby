@@ -1,22 +1,30 @@
 <script setup lang="ts">
-const columns: any[] = [
+import { onMounted, ref } from 'vue'
+import ProTable from '../../components/ProTable/index.vue'
+import request from '../../service/request'
+import { type ProColumnType } from '../../components/ProTable/interface';
+
+const columns: ProColumnType[] = [
   {
     label: '标题',
-    prop: 'label',
-    copyable: true,
-    ellipsis: true,
-    tooltip: '标题过长会自动收缩'
+    prop: 'title',
   },
   {
-    disable: true,
     label: '状态',
     prop: 'state',
-    filters: true,
-    onFilter: true,
-    ellipsis: true
+    valueType: 'select',
+    options: [
+      {
+        value: 'open',
+        label: '未解决'
+      },
+      {
+        value: 'closed',
+        label: '已解决'
+      }
+    ]
   },
   {
-    disable: true,
     label: '标签',
     prop: 'labels',
     search: false
@@ -27,14 +35,36 @@ const columns: any[] = [
     valueType: 'dateRange'
   },
   {
+    label: '标题1',
+    prop: 'title1',
+  },
+  {
+    label: '标题2',
+    prop: 'title2',
+  },
+  {
+    label: '标题3',
+    prop: 'title3',
+  },
+  {
+    label: '标题4',
+    prop: 'title4',
+  },
+  {
     label: '操作',
+    prop: 'option',
     valueType: 'option',
-    key: 'option'
   }
 ]
+
+const fetchDataSource = (params: any) => {
+  return request.get('https://proapi.azurewebsites.net/github/issues', {
+    params
+  })
+}
 </script>
 <template>
-  <div class="pro-table">
-    <ProTable :columns="columns" />
+  <div>
+    <ProTable :columns="columns" :request="fetchDataSource" />
   </div>
 </template>

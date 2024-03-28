@@ -106,6 +106,9 @@ export const menuList: MenuType[] = [
   {
     name: 'Vue',
     path: '/vue',
+    meta: {
+      title: '组件封装'
+    },
     children: [
       {
         name: 'TableDemo',
