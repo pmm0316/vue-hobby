@@ -6,6 +6,6 @@ export type ProColumnType = {
   label: string
   prop: string
   search?: boolean
-  valueType?: string
+  valueType?: 'select' | 'selectMultiple' | 'dateRange' | 'option'
   options?: any[]
 }

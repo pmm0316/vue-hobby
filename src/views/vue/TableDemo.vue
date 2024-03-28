@@ -22,7 +22,22 @@ const columns: ProColumnType[] = [
         value: 'closed',
         label: '已解决'
       }
-    ]
+    ],
+  },
+  {
+    label: '状态2',
+    prop: 'state2',
+    valueType: 'selectMultiple',
+    options: [
+      {
+        value: 'open',
+        label: '未解决'
+      },
+      {
+        value: 'closed',
+        label: '已解决'
+      }
+    ],
   },
   {
     label: '标签',

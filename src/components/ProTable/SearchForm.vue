@@ -13,7 +13,8 @@
           <el-form-item :label="item.label" :prop="item.prop" :label-width="80">
             <el-select
               placeholder="请选择"
-              v-if="item.valueType === 'select'"
+              :multiple="item?.valueType !== 'select'"
+              v-if="item.valueType?.indexOf('select') !== -1"
               v-model="searchModel[item.prop]"
             >
               <el-option
@@ -23,7 +24,16 @@
                 :value="op.value"
               />
             </el-select>
-
+            <el-date-picker
+              v-else-if="item?.valueType?.indexOf('date') !== -1"
+              v-model="searchModel[item.prop]"
+              type="daterange"
+              unlink-panels
+              range-separator="To"
+              start-placeholder=""
+              end-placeholder="End date"
+              size="small"
+            />
             <el-input v-else v-model="searchModel[item.prop]" placeholder="请输入" />
           </el-form-item>
         </el-col>
@@ -122,6 +132,7 @@ onMounted(() => {
   .fold-btn {
     font-size: 13px;
     color: #1677ff;
+    cursor: pointer;
   }
 }
 </style>

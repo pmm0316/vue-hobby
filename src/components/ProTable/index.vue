@@ -6,18 +6,19 @@
       @on-reset="handleClickReset"
     />
     <div class="table-wrapper">
-      <el-table border :data="tableData" height="100%" size="small">
+      <el-table border :data="tableData" height="100%" size="small" :row-key="rowKey">
         <el-table-column
-          :key="item.prop"
           v-for="item in props.columns"
+          :key="item.prop"
           :prop="item.prop"
           :fixed="item.fixed"
           :label="item.label"
           :width="item.width"
+          :show-overflow-tooltip="true"
         >
           <template #default="scope">
             <div>
-              <span style="margin-left: 10px">{{ getRenderText(scope.row, item) }}</span>
+              <span style="margin-left: 8px">{{ getRenderText(scope.row, item) }}</span>
             </div>
           </template>
         </el-table-column>
@@ -52,6 +53,10 @@ const props = defineProps({
   },
   request: {
     type: Function
+  },
+  rowKey: {
+    type: String,
+    default: 'id'
   }
 })
 
