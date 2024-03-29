@@ -1,6 +1,6 @@
 <template>
   <div class="search-form">
-    <el-form :form="searchForm" :model="searchModel" label-suffix=" :" size="small">
+    <el-form :form="searchForm" :model="searchModel" label-suffix=" :" size="default">
       <el-row>
         <el-col
           :span="6"
@@ -29,10 +29,10 @@
               v-model="searchModel[item.prop]"
               type="daterange"
               unlink-panels
-              range-separator="To"
-              start-placeholder=""
-              end-placeholder="End date"
-              size="small"
+              range-separator="~"
+              start-placeholder="开始时间"
+              end-placeholder="结束时间"
+              size="default"
             />
             <el-input v-else v-model="searchModel[item.prop]" placeholder="请输入" />
           </el-form-item>
@@ -120,7 +120,7 @@ onMounted(() => {
   padding: 15px;
   border: 1px solid #ebeef5;
   border-radius: 5px;
-  .el-form-item--small {
+  .el-form-item {
     margin-bottom: 10px;
   }
   .el-col {

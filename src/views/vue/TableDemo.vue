@@ -2,12 +2,12 @@
 import { onMounted, ref } from 'vue'
 import ProTable from '../../components/ProTable/index.vue'
 import request from '../../service/request'
-import { type ProColumnType } from '../../components/ProTable/interface';
+import { type ProColumnType } from '../../components/ProTable/interface'
 
 const columns: ProColumnType[] = [
   {
     label: '标题',
-    prop: 'title',
+    prop: 'title'
   },
   {
     label: '状态',
@@ -22,7 +22,7 @@ const columns: ProColumnType[] = [
         value: 'closed',
         label: '已解决'
       }
-    ],
+    ]
   },
   {
     label: '状态2',
@@ -37,7 +37,7 @@ const columns: ProColumnType[] = [
         value: 'closed',
         label: '已解决'
       }
-    ],
+    ]
   },
   {
     label: '标签',
@@ -51,25 +51,20 @@ const columns: ProColumnType[] = [
   },
   {
     label: '标题1',
-    prop: 'title1',
+    prop: 'title1'
   },
   {
     label: '标题2',
-    prop: 'title2',
+    prop: 'title2'
   },
   {
     label: '标题3',
-    prop: 'title3',
+    prop: 'title3'
   },
   {
     label: '标题4',
-    prop: 'title4',
+    prop: 'title4'
   },
-  {
-    label: '操作',
-    prop: 'option',
-    valueType: 'option',
-  }
 ]
 
 const fetchDataSource = (params: any) => {
@@ -80,6 +75,13 @@ const fetchDataSource = (params: any) => {
 </script>
 <template>
   <div>
-    <ProTable :columns="columns" :request="fetchDataSource" />
+    <ProTable :columns="columns" :request="fetchDataSource" :params="{ aa: 1 }">
+      <template #leftToolBar>
+        <el-button type="primary">新增</el-button>
+      </template>
+      <template #operations>
+        <el-button link type="primary" size="small">编辑  </el-button>
+      </template>
+    </ProTable>
   </div>
 </template>

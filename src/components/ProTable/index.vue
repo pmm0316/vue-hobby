@@ -1,14 +1,15 @@
 <template>
   <div class="pro-table">
-    <SearchForm
-      :columns="props.columns"
-      @on-search="handleClickSearch"
-      @on-reset="handleClickReset"
-    />
+    <SearchForm :columns="columns" @on-search="handleClickSearch" @on-reset="handleClickReset" />
+    <ToolBar>
+      <template #left>
+        <slot name="leftToolBar"></slot>
+      </template>
+    </ToolBar>
     <div class="table-wrapper">
-      <el-table border :data="tableData" height="100%" size="small" :row-key="rowKey">
+      <el-table border :data="tableData" height="100%" :row-key="rowKey">
         <el-table-column
-          v-for="item in props.columns"
+          v-for="item in columns"
           :key="item.prop"
           :prop="item.prop"
           :fixed="item.fixed"
@@ -22,6 +23,11 @@
             </div>
           </template>
         </el-table-column>
+        <el-table-column fixed="right" label="操作">
+          <template #default>
+            <slot name="operations"></slot>
+          </template>
+        </el-table-column>
       </el-table>
     </div>
     <div class="pagination-wrapper">
@@ -29,7 +35,6 @@
         v-model:current-page="pagination.currentPage"
         v-model:page-size="pagination.pageSize"
         :page-sizes="[5, 20, 50, 100]"
-        :small="true"
         layout="total, sizes, prev, pager, next, jumper"
         :total="pagination.total"
         @size-change="handleSizeChange"
@@ -39,11 +44,13 @@
   </div>
 </template>
 <script setup lang="ts">
-import { watch, toRefs, ref, defineProps, onMounted, reactive } from 'vue'
+import { watch, toRefs, ref, defineProps, onMounted, reactive, defineEmits } from 'vue'
 import SearchForm from './SearchForm.vue'
+import ToolBar from './ToolBar.vue'
 import type { SearchModelType } from './interface'
 
-const props = defineProps({
+const { columns, dataSource, request, rowKey, params } = defineProps({
+  params: Object,
   columns: {
     type: Array<any>,
     default: []
@@ -60,13 +67,14 @@ const props = defineProps({
   }
 })
 
+const emits = defineEmits(['onReset'])
+
 let tableData = ref<any[]>([])
 let pagination = reactive<any>({
   current: 1,
   pageSize: 5,
   total: 0
 })
-const { request } = props
 
 const handleClickSearch = (values: SearchModelType) => {
   console.log('handleClickSearch', values)
@@ -75,6 +83,11 @@ const handleClickSearch = (values: SearchModelType) => {
 
 const handleClickReset = () => {
   fetchData()
+  emits('onReset')
+}
+
+const handlePaginationChange = (pagination: any) => {
+  console.log('pagination', pagination)
 }
 
 const handleSizeChange = (val: number) => {
@@ -100,13 +113,16 @@ const getRenderText = (
 
 const fetchData = (searchValues?: SearchModelType) => {
   const { current, pageSize } = pagination
-  const params = {
+  const tableParams = {
     current,
     pageSize,
     ...searchValues
   }
   if (request) {
-    request(params).then((res: any) => {
+    request({
+      ...params,
+      ...tableParams
+    }).then((res: any) => {
       console.log('res', res)
       const { data, total } = res
       tableData.value = data
@@ -130,7 +146,7 @@ onMounted(() => {
     overflow-y: auto;
   }
   .pagination-wrapper {
-    padding: 15px;
+    padding: 10px;
   }
 }
 </style>
