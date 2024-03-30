@@ -1,7 +1,7 @@
 <template>
   <div class="pro-table">
     <SearchForm :columns="columns" @on-search="handleClickSearch" @on-reset="handleClickReset" />
-    <ToolBar>
+    <ToolBar v-model:list="tableColumns">
       <template #left>
         <slot name="leftToolBar"></slot>
       </template>
@@ -9,7 +9,7 @@
     <div class="table-wrapper">
       <el-table border :data="tableData" height="100%" :row-key="rowKey">
         <el-table-column
-          v-for="item in columns"
+          v-for="item in tableColumns"
           :key="item.prop"
           :prop="item.prop"
           :fixed="item.fixed"
@@ -66,6 +66,8 @@ const { columns, dataSource, request, rowKey, params } = defineProps({
     default: 'id'
   }
 })
+
+const tableColumns = ref<any[]>(columns)
 
 const emits = defineEmits(['onReset'])
 
