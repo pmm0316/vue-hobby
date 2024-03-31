@@ -7,3 +7,5 @@ declare module '*.vue' {
 declare interface Window {
   VueCookies: any
 }
+
+declare module 'element-plus/dist/locale/zh-cn.mjs'
