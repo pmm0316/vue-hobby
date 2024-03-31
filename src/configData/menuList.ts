@@ -4,8 +4,8 @@ type MenuType = {
   name: string
   path: string
   children?: MenuType[]
-  component?: RouteComponent,
-  meta?: RouteMeta,
+  component?: RouteComponent
+  meta?: RouteMeta
 }
 
 export const menuList: MenuType[] = [
@@ -16,6 +16,23 @@ export const menuList: MenuType[] = [
       title: '首页'
     },
     component: () => import('@/views/HomePage.vue')
+  },
+  {
+    name: 'Vue',
+    path: '/vue',
+    meta: {
+      title: '组件封装'
+    },
+    children: [
+      {
+        name: 'TableDemo',
+        path: '/vue/tableDemo',
+        component: () => import('@/views/vue/TableDemo.vue'),
+        meta: {
+          title: '表格演示'
+        }
+      }
+    ]
   },
   {
     name: 'D3',
@@ -31,7 +48,7 @@ export const menuList: MenuType[] = [
         meta: {
           title: '基础'
         }
-      },
+      }
     ]
   },
   {
@@ -100,23 +117,6 @@ export const menuList: MenuType[] = [
         name: 'HelloCesium',
         path: '/cesium/helloCesium',
         component: () => import('@/views/HelloCesium.vue')
-      }
-    ]
-  },
-  {
-    name: 'Vue',
-    path: '/vue',
-    meta: {
-      title: '组件封装'
-    },
-    children: [
-      {
-        name: 'TableDemo',
-        path: '/vue/tableDemo',
-        component: () => import('@/views/vue/TableDemo.vue'),
-        meta: {
-          title: '表格演示'
-        }
       }
     ]
   }

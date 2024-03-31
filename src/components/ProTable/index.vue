@@ -9,7 +9,7 @@
     <div class="table-wrapper">
       <el-table border :data="tableData" height="100%" :row-key="rowKey">
         <el-table-column
-          v-for="item in tableColumns"
+          v-for="item in customTableColumns"
           :key="item.prop"
           :prop="item.prop"
           :fixed="item.fixed"
@@ -44,7 +44,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { watch, toRefs, ref, defineProps, onMounted, reactive, defineEmits } from 'vue'
+import { watch, toRefs, ref, defineProps, onMounted, reactive, defineEmits, computed } from 'vue'
 import SearchForm from './SearchForm.vue'
 import ToolBar from './ToolBar.vue'
 import type { SearchModelType } from './interface'
@@ -69,6 +69,10 @@ const { columns, dataSource, request, rowKey, params } = defineProps({
 
 const tableColumns = ref<any[]>(columns)
 
+const customTableColumns = computed(() =>
+  tableColumns.value.filter((item) => item.hideInTable !== true)
+)
+
 const emits = defineEmits(['onReset'])
 
 let tableData = ref<any[]>([])
@@ -86,10 +90,6 @@ const handleClickSearch = (values: SearchModelType) => {
 const handleClickReset = () => {
   fetchData()
   emits('onReset')
-}
-
-const handlePaginationChange = (pagination: any) => {
-  console.log('pagination', pagination)
 }
 
 const handleSizeChange = (val: number) => {
