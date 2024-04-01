@@ -10,11 +10,15 @@
             'el-form-item-hidden': searchFold && index > 2
           }"
         >
-          <el-form-item :label="item.label" :prop="item.prop" :label-width="80">
+          <el-form-item
+            :label="item.label"
+            :prop="item.prop"
+            :label-width="search?.labelWidth || 80"
+          >
             <el-select
               placeholder="请选择"
               :multiple="item?.valueType !== 'select'"
-              v-if="item.valueType?.indexOf('select') !== -1"
+              v-if="['select', 'selectMultiple'].includes(item.valueType)"
               v-model="searchModel[item.prop]"
             >
               <el-option
@@ -25,7 +29,7 @@
               />
             </el-select>
             <el-date-picker
-              v-else-if="item?.valueType?.indexOf('date') !== -1"
+              v-else-if="['date', 'dateRange'].includes(item?.valueType)"
               v-model="searchModel[item.prop]"
               type="daterange"
               unlink-panels
@@ -34,13 +38,37 @@
               end-placeholder="结束时间"
               size="default"
             />
+            <el-checkbox-group
+              v-else-if="item?.valueType === 'checkbox'"
+              v-model="searchModel[item.prop]"
+            >
+              <el-checkbox
+                :label="op.label"
+                v-for="op in item.options"
+                :key="op.value"
+                :value="op.value"
+              />
+            </el-checkbox-group>
+            <el-radio-group
+              v-model="searchModel[item.prop]"
+              v-else-if="item?.valueType === 'radio'"
+            >
+              <el-radio
+                :label="op.label"
+                v-for="op in item.options"
+                :key="op.value"
+                :value="op.value"
+              />
+            </el-radio-group>
             <el-input v-else v-model="searchModel[item.prop]" placeholder="请输入" />
           </el-form-item>
         </el-col>
         <el-col style="text-align: right" :span="6" :offset="colOffset">
           <el-space>
-            <el-button type="primary" @click="handleClickSearch">查询</el-button>
-            <el-button @click="handleClickReset">重置</el-button>
+            <el-button type="primary" @click="handleClickSearch">{{
+              search?.searchText || '查询'
+            }}</el-button>
+            <el-button @click="handleClickReset">{{ search?.resetText || '重置' }}</el-button>
             <span v-if="searchList.length > 3" class="fold-btn" @click="searchFold = !searchFold"
               >{{ searchFold ? '展开' : '收起' }}
               <el-icon
@@ -55,39 +83,42 @@
   </div>
 </template>
 <script setup lang="ts">
-import { onMounted, watch, reactive, ref, defineProps, computed, toRefs, defineEmits } from 'vue'
+import { onMounted, watch, reactive, ref, defineProps, computed, toRef, defineEmits } from 'vue'
 import { ArrowDown, ArrowUp } from '@element-plus/icons-vue'
-import { type SearchModelType } from './interface'
+import type { ProColumnType, SearchModelType, ProTableSearchType, ProTableProps } from './interface'
 import type { FormInstance, FormRules } from 'element-plus'
 
-const props = defineProps({
-  columns: {
-    type: Array<any>,
-    default: []
-  }
-})
+const props = defineProps(['columns', 'search'])
 
 const emits = defineEmits(['onSearch', 'onReset'])
 
-const { columns } = toRefs(props)
+const columns = toRef(props, 'columns')
+const search = toRef(props, 'search')
 
 console.log('columns', columns)
 
 const searchForm = ref<FormInstance>()
 
 // 查询项 默认收起
-const searchFold = ref<boolean>(true)
+const searchFold = ref<boolean>(!search.value.defaultCollapsed)
 
 let searchModel = reactive<SearchModelType>({})
 
 const initialValues = () => {
-  columns.value.forEach((item) => {
-    searchModel[item.prop] = ''
+  columns.value.forEach((item: ProColumnType) => {
+    if (item.valueType === 'checkbox') {
+      searchModel[item.prop] = []
+    } else {
+      searchModel[item.prop] = ''
+    }
   })
 }
 
 const searchList = computed(() =>
-  props.columns.filter((item) => item.label && item.label !== '操作' && item.search !== false)
+  props.columns.filter(
+    (item: { label: string; search: boolean }) =>
+      item.label && item.label !== '操作' && item.search !== false
+  )
 )
 
 const colOffset = computed(() => {
@@ -97,6 +128,7 @@ const colOffset = computed(() => {
 
 const handleClickSearch = () => {
   const values: SearchModelType = {}
+  // 过滤掉空值
   for (let key in searchModel) {
     if (searchModel[key] !== '' && searchModel[key] !== undefined) {
       values[key] = searchModel[key]
@@ -122,6 +154,9 @@ onMounted(() => {
   border-radius: 5px;
   .el-form-item {
     margin-bottom: 10px;
+    .el-checkbox, .el-radio {
+      margin-right: 10px
+    }
   }
   .el-col {
     padding-right: 12px;

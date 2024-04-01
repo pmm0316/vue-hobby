@@ -1,20 +1,26 @@
 <template>
   <div class="pro-table">
-    <SearchForm :columns="columns" @on-search="handleClickSearch" @on-reset="handleClickReset" />
+    <SearchForm
+      v-if="props.search !== false"
+      :search="props.search"
+      :columns="columns"
+      @on-search="handleClickSearch"
+      @on-reset="handleClickReset"
+    />
     <ToolBar v-model:list="tableColumns">
       <template #left>
         <slot name="leftToolBar"></slot>
       </template>
     </ToolBar>
     <div class="table-wrapper">
-      <el-table border :data="tableData" height="100%" :row-key="rowKey">
+      <el-table border :data="tableData" height="100%" :row-key="props.rowKey">
         <el-table-column
           v-for="item in customTableColumns"
           :key="item.prop"
           :prop="item.prop"
-          :fixed="item.fixed"
+          :fixed="item?.fixed"
           :label="item.label"
-          :width="item.width"
+          :width="item?.width"
           :show-overflow-tooltip="true"
         >
           <template #default="scope">
@@ -44,30 +50,31 @@
   </div>
 </template>
 <script setup lang="ts">
-import { watch, toRefs, ref, defineProps, onMounted, reactive, defineEmits, computed } from 'vue'
+import {
+  watch,
+  ref,
+  toRef,
+  defineProps,
+  onMounted,
+  reactive,
+  defineEmits,
+  computed,
+  withDefaults
+} from 'vue'
 import SearchForm from './SearchForm.vue'
 import ToolBar from './ToolBar.vue'
-import type { SearchModelType } from './interface'
+import type { SearchModelType, ProColumnType, ProTableProps } from './interface'
 
-const { columns, dataSource, request, rowKey, params } = defineProps({
-  params: Object,
-  columns: {
-    type: Array<any>,
-    default: []
+const props = withDefaults(defineProps<ProTableProps>(), {
+  columns: () => [],
+  search: () => {
+    return {}
   },
-  dataSource: {
-    default: []
-  },
-  request: {
-    type: Function
-  },
-  rowKey: {
-    type: String,
-    default: 'id'
-  }
+  rowKey: 'id'
 })
 
-const tableColumns = ref<any[]>(columns)
+const tableColumns = ref<ProColumnType[]>(props.columns)
+let tableData = ref([])
 
 const customTableColumns = computed(() =>
   tableColumns.value.filter((item) => item.hideInTable !== true)
@@ -75,7 +82,6 @@ const customTableColumns = computed(() =>
 
 const emits = defineEmits(['onReset'])
 
-let tableData = ref<any[]>([])
 let pagination = reactive<any>({
   current: 1,
   pageSize: 5,
@@ -120,11 +126,13 @@ const fetchData = (searchValues?: SearchModelType) => {
     pageSize,
     ...searchValues
   }
+  const { request, params } = props
   if (request) {
-    request({
+    const fetchParams = {
       ...params,
       ...tableParams
-    }).then((res: any) => {
+    }
+    request(fetchParams).then((res: any) => {
       console.log('res', res)
       const { data, total } = res
       tableData.value = data
@@ -136,6 +144,13 @@ const fetchData = (searchValues?: SearchModelType) => {
 onMounted(() => {
   fetchData()
 })
+watch(
+  () => props.params,
+  () => {
+    fetchData()
+  },
+  { deep: true }
+)
 </script>
 
 <style lang="scss" scoped>

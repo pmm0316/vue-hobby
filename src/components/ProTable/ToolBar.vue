@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { ref, defineEmits, defineProps, watch } from 'vue'
-import { Setting } from '@element-plus/icons-vue'
 import Draggable from 'vuedraggable'
 
 const props = defineProps(['list'])
