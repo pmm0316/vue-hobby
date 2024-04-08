@@ -31,6 +31,14 @@ export const menuList: MenuType[] = [
         meta: {
           title: '表格演示'
         }
+      },
+      {
+        name: 'TestPage',
+        path: '/vue/testPage',
+        component: () => import('@/views/vue/TestPage.vue'),
+        meta: {
+          title: '测试页面'
+        }
       }
     ]
   },
