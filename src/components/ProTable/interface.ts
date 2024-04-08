@@ -25,4 +25,7 @@ export interface ProTableProps {
   request?: Function
   rowKey?: string
   params?: Object // 用于 request 查询的额外参数，一旦变化会触发重新加载
+  selection?: {
+    width?: number
+  } | false
 }

@@ -13,7 +13,8 @@
       </template>
     </ToolBar>
     <div class="table-wrapper">
-      <el-table border :data="tableData" height="100%" :row-key="props.rowKey">
+      <el-table border :data="tableData" height="100%" :row-key="props.rowKey" stripe>
+        <el-table-column type="selection" :width="selection.width" v-if="selection" />
         <el-table-column
           v-for="item in customTableColumns"
           :key="item.prop"
@@ -70,10 +71,14 @@ const props = withDefaults(defineProps<ProTableProps>(), {
   search: () => {
     return {}
   },
-  rowKey: 'id'
+  rowKey: 'id',
+  selection: () => {
+    return { width: 45 }
+  }
 })
 
 const tableColumns = ref<ProColumnType[]>(props.columns)
+const selection = ref(props?.selection)
 let tableData = ref([])
 
 const customTableColumns = computed(() =>
