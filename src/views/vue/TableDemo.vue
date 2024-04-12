@@ -1,10 +1,13 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { reactive, ref } from 'vue'
 import ProTable from '../../components/ProTable/index.vue'
 import request from '../../service/request'
+import MyModal from '../../components/MyModal/index.vue'
 import { type ProColumnType } from '../../components/ProTable/interface'
 
-let params = ref({})
+let params = reactive({})
+let open = ref(false)
+// const aa = reactive(1)
 
 const columns: ProColumnType[] = [
   {
@@ -85,10 +88,10 @@ const fetchDataSource = (params: any) => {
   })
 }
 const handleClick = () => {
-  params.value = {
+  params = {
     aa: 1
   }
-  console.log(params.value)
+  console.log(params)
 }
 </script>
 <template>
@@ -100,11 +103,14 @@ const handleClick = () => {
       :search="{ searchText: '搜索', resetText: 'reset', defaultCollapsed: false }"
     >
       <template #leftToolBar>
-        <el-button type="primary">新增</el-button>
+        <el-button type="primary" @click="open = true">新增</el-button>
       </template>
       <template #operations>
         <el-button link type="primary" size="small" @click="handleClick">编辑</el-button>
       </template>
     </ProTable>
+    <MyModal v-model:open="open" title="新增" @on-cancel="open = false">
+      <div>自定义内容</div>
+    </MyModal>
   </div>
 </template>

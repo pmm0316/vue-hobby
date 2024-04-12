@@ -16,6 +16,7 @@ export type ProTableSearchType = {
   resetText?: string // 重置按钮的文本
   labelWidth?: number // 标签的宽度
   defaultCollapsed?: boolean // 默认是否收起
+  span?: number // 配置查询表单的列数
 }
 
 export interface ProTableProps {
