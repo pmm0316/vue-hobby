@@ -93,6 +93,10 @@ const handleClick = () => {
   }
   console.log(params)
 }
+
+const handleClickCollapsed = (val: boolean) => {
+  console.log('val', val)
+}
 </script>
 <template>
   <div>
@@ -100,7 +104,7 @@ const handleClick = () => {
       :columns="columns"
       :request="fetchDataSource"
       :params="params"
-      :search="{ searchText: '搜索', resetText: 'reset', defaultCollapsed: false }"
+      @on-collapsed="handleClickCollapsed"
     >
       <template #leftToolBar>
         <el-button type="primary" @click="open = true">新增</el-button>

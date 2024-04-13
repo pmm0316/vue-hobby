@@ -17,6 +17,7 @@ export type ProTableSearchType = {
   labelWidth?: number // 标签的宽度
   defaultCollapsed?: boolean // 默认是否收起
   span?: number // 配置查询表单的列数
+  className?: string // 封装的搜索 Form 的 className
 }
 
 export interface ProTableProps {
@@ -26,7 +27,9 @@ export interface ProTableProps {
   request?: Function
   rowKey?: string
   params?: Object // 用于 request 查询的额外参数，一旦变化会触发重新加载
-  selection?: {
-    width?: number
-  } | false
+  selection?:
+    | {
+        width?: number
+      }
+    | false
 }

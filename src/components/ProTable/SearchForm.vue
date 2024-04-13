@@ -3,11 +3,11 @@
     <el-form :form="searchForm" :model="searchModel" label-suffix=" :" size="default">
       <el-row>
         <el-col
-          :span="6"
+          :span="search.span"
           v-for="(item, index) in searchList"
           :key="item.prop"
           :class="{
-            'el-form-item-hidden': searchFold && index > 2
+            'el-form-item-hidden': !collapsed && index > singleLineCount
           }"
         >
           <el-form-item
@@ -63,17 +63,20 @@
             <el-input v-else v-model="searchModel[item.prop]" placeholder="请输入" />
           </el-form-item>
         </el-col>
-        <el-col style="text-align: right" :span="6" :offset="colOffset">
+        <el-col :span="search.span" :offset="colOffset">
           <el-space>
             <el-button type="primary" @click="handleClickSearch">{{
               search?.searchText || '查询'
             }}</el-button>
             <el-button @click="handleClickReset">{{ search?.resetText || '重置' }}</el-button>
-            <span v-if="searchList.length > 3" class="fold-btn" @click="searchFold = !searchFold"
-              >{{ searchFold ? '展开' : '收起' }}
+            <span
+              v-if="searchList.length > 24 / search.span - 1"
+              class="fold-btn"
+              @click="handleClickCollapsed"
+              >{{ collapsed ? '收起' : '展开' }}
               <el-icon
-                ><ArrowUp v-show="!searchFold" />
-                <ArrowDown v-show="searchFold" />
+                ><ArrowUp v-show="collapsed" />
+                <ArrowDown v-show="!collapsed" />
               </el-icon>
             </span>
           </el-space>
@@ -83,24 +86,22 @@
   </div>
 </template>
 <script setup lang="ts">
-import { onMounted, watch, reactive, ref, defineProps, computed, toRef, defineEmits } from 'vue'
+import { onMounted, toRefs, reactive, ref, defineProps, computed, toRef, defineEmits } from 'vue'
 import { ArrowDown, ArrowUp } from '@element-plus/icons-vue'
 import type { ProColumnType, SearchModelType, ProTableSearchType, ProTableProps } from './interface'
 import type { FormInstance, FormRules } from 'element-plus'
 
 const props = defineProps(['columns', 'search'])
 
-const emits = defineEmits(['onSearch', 'onReset'])
+const emits = defineEmits(['onSearch', 'onReset', 'onCollapsed'])
 
 const columns = toRef(props, 'columns')
 const search = toRef(props, 'search')
 
-console.log('columns', columns)
-
 const searchForm = ref<FormInstance>()
 
 // 查询项 默认收起
-const searchFold = ref<boolean>(!search.value.defaultCollapsed)
+const collapsed = ref<boolean>(search.value.defaultCollapsed)
 
 let searchModel = reactive<SearchModelType>({})
 
@@ -114,16 +115,22 @@ const initialValues = () => {
   })
 }
 
+// 过滤出需要显示出来的查询项
 const searchList = computed(() =>
-  props.columns.filter(
+  columns.value.filter(
     (item: { label: string; search: boolean }) =>
       item.label && item.label !== '操作' && item.search !== false
   )
 )
 
+// 单行显示的查询项数量
+const singleLineCount = computed(() => {
+  return Math.floor(24 / search.value.span) - 2
+})
+
 const colOffset = computed(() => {
-  const showLen = searchFold.value ? 3 : searchList.value.length
-  return 24 - ((showLen % 4) + 1) * 6
+  const showLen = collapsed.value ? searchList.value.length : singleLineCount
+  return 24 - ((showLen % (24 / search.value.span)) + 1) * search.value.span
 })
 
 const handleClickSearch = () => {
@@ -142,6 +149,11 @@ const handleClickReset = () => {
   emits('onReset')
 }
 
+const handleClickCollapsed = () => {
+  collapsed.value = !collapsed.value
+  emits('onCollapsed', collapsed.value)
+}
+
 onMounted(() => {
   initialValues()
 })
@@ -154,12 +166,16 @@ onMounted(() => {
   border-radius: 5px;
   .el-form-item {
     margin-bottom: 10px;
-    .el-checkbox, .el-radio {
-      margin-right: 10px
+    .el-checkbox,
+    .el-radio {
+      margin-right: 10px;
     }
   }
   .el-col {
     padding-right: 12px;
+    &:last-child {
+      text-align: right;
+    }
   }
   .el-form-item-hidden {
     display: none;

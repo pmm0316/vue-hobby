@@ -12,15 +12,13 @@ import {
 } from 'vue'
 import SearchForm from './SearchForm.vue'
 import ToolBar from './ToolBar.vue'
-import type { SearchModelType, ProColumnType, ProTableProps } from './interface'
+import type { SearchModelType, ProTableProps } from './interface'
 import ProPagination from './ProPagination.vue'
 
 const props = withDefaults(defineProps<ProTableProps>(), {
   columns: () => [],
   search: () => {
-    return {
-      span: 6
-    }
+    return {}
   },
   rowKey: 'id',
   selection: () => {
@@ -28,7 +26,21 @@ const props = withDefaults(defineProps<ProTableProps>(), {
   }
 })
 
-const { rowKey, selection } = toRefs(props)
+const { rowKey, selection, search } = toRefs(props)
+
+// 传入的sarch和默认值search进行合并
+const mergedSearch = computed(() => {
+  const defaultSearch = {
+    span: 6
+  }
+  if (typeof search.value === 'object') {
+    return {
+      ...defaultSearch,
+      ...search.value
+    }
+  }
+  return defaultSearch
+})
 
 const tableColumns = ref(props.columns)
 // const selection = ref(props?.selection)
@@ -38,7 +50,7 @@ const customTableColumns = computed(() =>
   tableColumns.value.filter((item) => item.hideInTable !== true)
 )
 
-const emits = defineEmits(['onReset'])
+const emits = defineEmits(['onReset', 'onSearch', 'onCollapsed'])
 
 const pagination = reactive<any>({
   currentPage: 1,
@@ -46,11 +58,14 @@ const pagination = reactive<any>({
   total: 0
 })
 
+// 点击查询
 const handleClickSearch = (values: SearchModelType) => {
   console.log('handleClickSearch', values)
   fetchData(values)
+  emits('onSearch', values)
 }
 
+// 点击重置
 const handleClickReset = () => {
   fetchData()
   emits('onReset')
@@ -112,11 +127,12 @@ watch(
 <template>
   <div class="pro-table">
     <SearchForm
-      v-if="props.search !== false"
-      :search="props.search"
+      v-if="search !== false"
+      :search="mergedSearch"
       :columns="columns"
       @on-search="handleClickSearch"
       @on-reset="handleClickReset"
+      @on-collapsed="(collapsed) => emits('onCollapsed', collapsed)"
     />
     <ToolBar v-model:list="tableColumns">
       <template #left>

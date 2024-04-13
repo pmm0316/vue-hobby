@@ -1,13 +1,11 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useMouse } from '../../hooks/mouse.js'
+import { useMouse } from '@/hooks/mouse.js'
 import MyModal from '../../components/MyModal/index.vue'
 
 const { x, y } = useMouse()
 let open = ref(false)
 let title = ref('新增')
-
-console.log('x, y', x, y)
 </script>
 <template>
   <div>x {{ x }}, y {{ y }}</div>
