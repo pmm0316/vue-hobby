@@ -56,18 +56,6 @@
       <div>4. 了解打包工具 webpack，vite</div>
       <div>5. 了解 java，springMVC，mybatis</div>
     </el-card>
-    <el-card class="box-card">
-      <template #header>
-        <div class="card-header">
-          <span>前端工作经历</span>
-        </div>
-      </template>
-      <el-table :data="tableData">
-        <el-table-column prop="workingTime" label="工作时间" />
-        <el-table-column prop="companyName" label="公司" />
-        <el-table-column prop="post" label="岗位" />
-      </el-table>
-    </el-card>
   </div>
 </template>
 <script setup lang="ts">
