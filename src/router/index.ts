@@ -1,9 +1,9 @@
-import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
+import { createRouter, createWebHashHistory, type RouteRecordRaw } from 'vue-router'
 import { menuList } from '../configData/menuList'
 import { treeToArray } from '../utils/utils'
 
 const router = createRouter({
-  history: createWebHistory('/vue-hobby'),
+  history: createWebHashHistory('/vue-hobby'),
   strict: true,
   routes: [
     {
