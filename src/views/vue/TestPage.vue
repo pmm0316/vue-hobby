@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useMouse } from '@/hooks/mouse.js'
+import { useMouse } from '../../hooks/mouse'
 import MyModal from '../../components/MyModal/index.vue'
 
 const { x, y } = useMouse()

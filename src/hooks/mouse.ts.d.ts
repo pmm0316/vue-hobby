@@ -1,0 +1,1 @@
+export function useMouse(): { x: number, y: number };

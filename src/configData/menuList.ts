@@ -43,6 +43,23 @@ export const menuList: MenuType[] = [
     ]
   },
   {
+    name: 'ProPresentation',
+    path: '/proPresentation',
+    meta: {
+      title: '项目展示'
+    },
+    children: [
+      {
+        name: 'H5',
+        path: '/proPresentation/h5',
+        component: () => import('@/views/proPresentation/h5.vue'),
+        meta: {
+          title: 'H5'
+        }
+      }
+    ]
+  },
+  {
     name: 'D3',
     path: '/d3',
     meta: {

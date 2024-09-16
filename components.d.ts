@@ -38,6 +38,7 @@ declare module 'vue' {
     ElTableColumn: typeof import('element-plus/es')['ElTableColumn']
     ElTimeline: typeof import('element-plus/es')['ElTimeline']
     ElTimelineItem: typeof import('element-plus/es')['ElTimelineItem']
+    H5WebView: typeof import('./src/components/H5WebView/index.vue')['default']
     MyModal: typeof import('./src/components/MyModal/index.vue')['default']
     ProPagination: typeof import('./src/components/ProTable/ProPagination.vue')['default']
     ProTable: typeof import('./src/components/ProTable/index.vue')['default']
